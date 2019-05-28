@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Form</title>
+  <style>
+  div{
+    width: 100px;
+    height: 100px;
+    border:2px solid black;
+  }
+  </style>
+</head>
+<body>
+  <form>
+    <input type='button' class='btn' value='点一下'>
+    <input type='text' class='show'>
+  </form>
+  <div contenteditable="true" class='div'></div>
+  <script>
+    let text = document.querySelector('.div');
+    let btn = document.querySelector('.btn');
+    let show = document.querySelector('.show');
+    let currentRange = '';
+    text.onblur = function () {
+      if(window.getSelection().rangeCount === 0){
+      return;
+      };
+      currentRange = window.getSelection().toString();
+    }
+
+    text.onchange = function () {
+      console.log(window.getSelection());
+      if(window.getSelection().rangeCount === 0){
+        return;
+      };
+      currentRange = window.getSelection().getRangeAt(0).cloneRange();
+      console.log(currentRange);
+    }
+
+    btn.onclick = function () {
+      console.log(window.getSelection());
+      show.value = window.getSelection().toString();
+    }
+
+    function API(editor) {
+      this.editor = editor;
+      this._currentRange = null;
+    }
+
+    API.prototype = {
+      constructor: API,
+
+      getRange: function () {
+        return this._currentRange;
+      },
+
+      saveRange: function (_range) {
+        if(_range){
+          //保存已有选区
+          return this._currentRange = _range;
+        }
+
+        //不存在选区时，获取当前最新选区
+        const selection = window.getSelection();
+        if(selection.rangeCount === 0){
+          //当未选择任何内容时返回
+          return;
+        }
+
+        const range = selection.getRangeAt(0);
+
+        //判断选区内容是否在编辑内容之内
+        const containerElem = this.getSelectionContainerElem(range);
+        if(containerElem){
+          return;
+        }
+
+        // 判断选区内容是否在不可编辑区域之内
+        if (containerElem.attr('contenteditable') === 'false' || containerElem.parentUntil('[contenteditable=false]'))
+        {
+        return
+        }
+
+        const editor = this.editor
+        const $textElem = editor.$textElem
+        if ($textElem.isContain($containerElem)) {
+          // 是编辑内容之内的
+          this._currentRange = range
+        }
+      },
+
+      collapseRange: function (toStart) {
+        if(toStart == null){
+          toStart = false;
+        }
+
+        const range = this._currentRange;
+        if(range){
+          range.collapse(toStart);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

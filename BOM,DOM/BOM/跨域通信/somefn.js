@@ -1,0 +1,1 @@
+somefn({status: 'ok'});

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <a href="NetKeeper.zip" download="NetKeeper.zip">111</a>
+  <script>
+  var p = {
+    x: 1.0,
+    y: 1.0,
+    get r() {
+      return this.x * this.y;
+    },
+    set r(newvalue) {
+      let oldvalue = this.x * this.y;
+      return oldvalue * newvalue;
+    },
+
+    // 只读属性的存取器，它只有getter方法
+    get readonly() { return this.x + this.y; }
+  };
+
+
+   Object.prototype.pollyassign = function (to, from) {
+     for(let name in from){
+       to[name] = from[name];
+     }
+     return to;
+   }
+
+var a = "abc";
+var b = {
+    v1: "def",
+    v2: true,
+    v3: 10,
+    v4: Symbol("foo"),
+    v5: null,
+    v6: undefined
+}
+
+var obj = Object.assign(a, b);
+console.log(obj);
+function deepCopy(from) {
+  let to = Array.isArray(from)? []: {};
+  for(let key in to){
+    if(Object.prototype.hasOwnProperty.call(from, key)){
+      if(typeof from[key] == 'object' && from[key] !== null){
+        to[key] = deepCopy(from[key]);
+      }else{
+        to[key] = from[key];
+      }
+    }
+  }
+  return to;
+}
+
+  </script>
+</body>
+</html>

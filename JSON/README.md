@@ -1,0 +1,173 @@
+# JSON
+
+## 语法表示
+JSON语法可以表示下面三种类型的值：
+**简单值**：可以表示字符串、数值、布尔值和`null`，不支持`undefined`。
+```js
+"Hello World"
+```
+JSON字符串**必须使用双引号**（单引号会导致语法错误）
+
+**对象**：表示一组无序的键值对。
+```js
+{
+  "name": "Mihan",
+  "age": 29
+}
+```
+JSON中的对象要求给属性加引号。
+与javasript的对象字面量相比，JSON对象*没有声明变量而且没有末尾的分号*。
+
+**数组**：表示一组有序的值的列表，可以通过数值索引来访问其中的值。
+```js
+[25, "hi", true]
+```
+同对象一样，JSON数组没有变量和末尾分号。
+
+## JSON对象
+`eval()`函数可以解析、解释JSON字符串并返回对应的Javascript对象和数组。
+
+## 方法
+JSON对象有两个方法：
+
+### JSON.stringify()
+`stringify()`：把Javascript对象序列化为JSON字符串。（不包含任何空格字符或缩进）
+
+在序列化过程中，所有函数及原型成员都会被忽略且值为`undefined`的任何属性也会被跳过。
+```js
+var book = {
+    title: "Professional Javascript",
+    authors: [
+      "Nicholas C.ZAks"
+    ],
+    edition: 3,
+    year: 2011,
+    method: function () {}
+  };
+  var jsonText = JSON.stringify(book);
+  //解析为字符串结果为: "{"title":"Professional Javascript","authors":["Nicholas C.ZAks"],"edition":3,"year":2011}"
+```
+
+该方法还可以接受另外两个参数：
+第二个参数为可选参数,是个过滤器,可以为一个数组或者一个函数。
+
+例如：当在上述方法中加入如下数组参数时：
+```js
+var jsonText=JSON.stringify(book,["title","edition"]);
+//"{"title":"Professional Javascript","edition":3}"
+```
+返回结果变更为只包含数组中各属性名的选项。
+
+
+当在上述方法中加入如下函数参数时：
+```js
+var jsonText = JSON.stringify(book, function (key, value) {
+  console.log(key, value);
+  switch (key) {
+    case "authors":
+      return value.join(",")
+
+    case "year":
+      return 5000;
+
+    case "edition":
+      return undefined;
+
+    default:
+      return value;
+  }
+});
+//"{"title":"Professional Javascript","authors":"Nicholas C.ZAks","year":5000}"
+```
+
+第三个参数为一个可选参数，表示是否在JSON字符串中保留缩进。
+
+当该参数为一个*数值*时，表示每个级别缩进的空格数。（只要传入有效的控制缩进的参数值，结果字符串就会包含换行符）例如：
+```js
+var jsonText = JSON.stringify(book,null,4);
+/*"{
+*    "title": "Professional Javascript",
+*    "authors": [
+*        "Nicholas C.ZAks"
+*    ],
+*    "edition": 3,
+*    "year": 2011
+}"*/
+```
+（数值的最大缩进空格数为10，大于10的值会自动转换为10）
+
+当该参数为一个*字符串*时，则这个字符串将会在JSON字符串中被用作缩进字符（而不是使用空格缩进）缩进字符串的最长不能超过10个字符长，超过后只出现前10个。例如：
+```js
+var jsonText = JSON.stringify(book,null,"wodessssddddf");
+/*"{
+*wodessssdd"title": "Professional Javascript",
+*wodessssdd"authors": [
+*wodessssddwodessssdd"Nicholas C.ZAks"
+*wodessssdd],
+*wodessssdd"edition": 3,
+*wodessssdd"year": 2011
+}"*/
+```
+结果为：（使用该方式后会破坏结构，导致无法再使用`JSON.parse()`方法）
+
+### JSON.parse()
+`parse()`：把JSON字符串解析为原始Javascript值。
+```js
+var jsonObject=JSON.parse(jsonText);
+```
+返回为一个js对象：
+
+该方法接收一个函数参数（还原函数），并在每个键值对上调用。基本同上面的回调函数一样，拥有一个`key`与`value`参数，分别表示JSON字符串的属性名与值。
+
+如果还原函数返回`undefined`，则表示要从结果中*删除*相应的键；返回其他值时表示将该值插入到结果中。例如：
+```js
+var book = {
+    title: "Professional Javascript",
+    authors: [
+      "Nicholas C.ZAks"
+    ],
+    edition: 3,
+    year: 2011,
+    releaseDate: new Date(2011,11,1)
+};
+
+var jsonText = JSON.stringify(book);
+console.log(jsonText);
+
+var jsonObject = JSON.parse(jsonText, function (key, value) {
+  if(key == "releaseDate"){
+    return new Date(value);
+  }else{
+    return value;
+  }
+});
+//原对象中releaseDate值为releaseDate:"2011-11-30T16:00:00.000Z"
+//现对象中releaseDate值为releaseDate:"Thu Dec 01 2011 00:00:00 GMT+0800 (中国标准时间)"
+```
+
+### toJSON()
+给对象定义`toJSON()`方法时，调用`JSON.stringify()`会优先调用其自身的`toJSON()`序列化数据的格式,在进一步转为JSON字符串。
+
+原生Date对象有一个`toJSON()`方法，可以将javasript的`Date`对象自动转换成`ISO 8601`日期字符串（与在`Date`对象上调用`toISOString()`结果一样）
+```js
+var book={
+    title: "Professional Javascript",
+    authors: [
+      "Nicholas C.ZAks"
+    ],
+    edition: 3,
+    year: 2011,
+    do: undefined,
+    toJSON: function(){
+      return this.title;
+    }
+  };
+var jsonText = JSON.stringify(book);//"Professional Javascript"
+```
+## 序列化规则
+可以让`toJSON()`方法返回任何值，它都能正常工作。`toJSON()`方法可以作为函数过滤器的补充：当把一个对象传入`JSON.stringify()`方法时，序列化该对象的顺序为：
+1.	如果存在`toJSON()`方法并且能得到有效的值，则调用该方法，然后返回调用该方法后过滤的对象，否则，返回对象本身。
+2.	如果提供了第二个参数（过滤器参数）则应用这个过滤器，但是是在第一步返回对象的基础上。
+3.	对第二步返回值逐个进行序列化
+4.	如果提供了第三个参数，在执行相应的格式化。
+
