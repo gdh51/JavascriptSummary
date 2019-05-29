@@ -139,6 +139,43 @@ location = "#top";//跳转到id为top的元素
 + `javaEnabled()`：当浏览器可以运行Java小程序时返回`true`
 + `cookieEnable`：布尔值，浏览器可以永久保存`cookie`时返回`true`。
 
+##### 离线检测(navigator.onLine)
+有一个`navigator.onLine`属性，当值为`true`时表示设备能上网，`false`表示设备离线。
+
+同时HTML5还定义两个事件：`online`和`offline`，当从离线或在线互相转换时，会触发对应的事件（*在`window`对象上触发*）
+
+##### 地理位置定位(navigator.geolocation)
+地理位置定位，javascript代码能够访问用户的当前位置,最早实现于`navigator.geolocation`对象，该对象有3个方法：
+`geolocation.getCurrentPosition()`：触发请求用户共享地理定位信息的对话框。该方法接收3个参数：成功的回调函数、可选的失败回调函数和可选的选项对象。
+其中*成功*的回调函数会接收一个`Position`对象参数如下：
++ latitude：以十进制表示纬度
++ longitude：以十进制度数表示经度
++ accuracy：经纬度坐标的精度，以米为单位
++ altitude：以米为单位的海拔高度
++ altitudeAccuracy：海拔高度的精度
++ heading：指南针的方向，0度表示正北。
++ speed：每秒移动多少米
+
+在*失败*的回调中也会收到一个参数对象。包含两个属性：`message`和`code`，其中`message`保存着给人看的文本消息，解释为什么会出错，`code`保存一个数值，表示错误的类型：
+1. 用户拒绝共享
+2. 位置无效
+3. 位置超时
+
+第三个参数是一个选项对象，用于设定信息的类型，可选的选项有3个：
++ enableHighAccuray：是一个布尔值，表示必须尽可能使用最精确的位置信息；
++ timeout：是以毫秒数表示的等待位置信息的最长时间；
++ maximumAge：上一次获取的坐标信息的有效时间，以毫秒表示。可以设置为`Infinity`始终用上一次的坐标信息
+
+```js
+navigator.geolocation.getCurrentPosition(success,error,{
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 25000
+  });
+```
+
+`geolocation.watchPosition()`追踪用户的位置。接收三个参数同上面的方法，实际上该方法就是定时调用上面的方法。调用该方法会返回一个数值标识符，传入`geolocation.clearWatch()`方法可取消监控操作。
+
 #### Screen对象
 
 `Window`的`screen`属性引用的是`Screen`对象。它提供有关窗口显示的大小和可用的颜色数量的信息。该对象的`availHeight`和`Height`相关属性分别表示的是电脑显示屏的可视区域（不包含工具栏）和可视区域（包含工具栏），可用该对象来判断是否在小屏幕设备上运行。
@@ -196,6 +233,81 @@ window.open("RegExp.html","wode","width=400,height=400;status=yes;resizable=yes"
 #### WinodwProxy对象
 客户端Javascript有两个重要的对象，客户端全局对象处于作用域链顶级，并且是全局变量和函数所定义的地方。
 但**全局对象会在窗体或窗口载入时被替换为全局对象的代理即我们称的window对象**，每当查询或设置`window`对象属性时，就会正真的全局对象上设置或查询，我们称代理对象为*WindowProxy*。**没有办法可以引用到真正的全局对象**。
+
+#### 安全类型检测
+```js
+var isArray=value instanceof Array;
+```
+要使以上代码返回`true`，`value`必须与`Array`构造函数来自**同个全局作用域**（同一框架）。
+
+##### 安全的检查方法
+在任何值上调用`Object`原生的`toString()`方法，都会返回一个`[Object NativeConstructorName]`格式的字符串。每个类在内部都有一个`[[Class]]`属性，这个属性中就指定了上述字符串中的构造函数名，如：
+```js
+var value = [];
+console.log( {}.toString.call(value));
+//返回:    [object Array]
+```
+
+由于原生数组的构造函数与全局作用域无关，因此使用对象的`toString()`方法可以检查任何类型（在某些浏览器 用`typeof`方法检查正则表达式会返回`function`），但自定义的构造函数都将返回`[object Object]`
+
+在IE中以COM对象形式实现的任何函数，`isFunction()`都将返回`false`（因为它们并非原生函数）且在低级IE版本中,`typeof node`可能返回`function`需要同时检测`nodeType`属性
+
+
+#### requestAnimationFrame()——更平滑的动画体验
+最平滑动画的最佳循环间隔是1000ms/60≈17ms 但浏览器定时器最小时间间隔为40ms,且浏览器计数器精度没法确保浏览器按时绘制下一帧。
+
+`requestAnimationFrame()`告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行
+```js
+//传入一个元素p 自动开始执行动画
+function move(p) {
+       var left = p.offsetLeft;
+       left += 1;
+       p.style.left = left + 'px';
+       requestAnimationFrame(move);
+     }
+```
+
+#### 页面可见性
+`Page Visibility API`
+让开发人员知道页面是否对用户可见（如页面最小化，隐藏在其他标签页后）（必须加浏览器前缀）
+由三个部分组成：
++ document.hidden：表示页面是否隐藏的布尔值。页面隐藏包括页面在后台标签页中或浏览器最小化
+
++ document.visibilityState：表示4个可能状态的值：
+  + hidden:页面在后台标签页中或浏览器最小化
+  + visible:页面在前台标签页中
+  + 实际的页面已经隐藏，但用户可以看到页面的预览
+  + prerender:页面在屏幕外执行预渲染处理
+
++ visibilitychange事件：当文档从可见变为不可见或从不可见变为可见时，触发该事件
+必须在DOM3级事件处理程序上添加（`window.addEventListener()`）
+
+
+#### Web计时
+Web计时机制的核心是`window.performance`对象，该对象有两个表示对象的属性：
+其中一个为`performance.navigation`对象,它有以下属性
++ redirectCount：页面加载前的重定向次数
++ type：刚刚发生的导航类型：
+  + 1:表示页面重载过
+  + 2:表示通过后退或前进按钮打开的
+  + 0:表示第一次加载
+
+另外为`performance.timing`对象，该对象的属性都是时间戳。（从软件纪元开始经过的毫秒数），拥有以下属性：
+
++ navigationStart：开始导航到当前页面的时间
++ unloadEventStart：前一个页面的`unload`事件开始的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值；
++ unloadEventEnd：前一个页面`unload`事件结束的时间。
++ redirectStart、redirectEnd：到当前页面的重定向开始或结束的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值
++ fetchStart：开始通过`HTTP GET`取得页面的时间
++ domainLookupStart、domainLookupEnd：开始查询当前页面DNS的时间或查询当前页面DNS结束的时间
++ connectStart、connectEnd：浏览器尝试连接服务器的时间、服务器成功连接到服务器的时间。
++ secureConnectionStart：浏览器尝试以SSL方式连接服务器的时间。
++ requestStart、responseStart：浏览器开始请求页面的时间、浏览器接收到页面第一个字节的时间。
++ resopseEnd：浏览器接收页面所有内容的时间
++ domLoading：`document.readyState`变为`loading`的时间
++ domInteractive：`document.readyState`变为`interactive`的时间
++ domContentLoadedEventStart、domContentLoadedEventEnd：发生`DOMContentLoaded`事件的时间、`DOMContentLoaded`事件已经发生且执行完所有事件程序的时间
+
 
 ## DOM
 

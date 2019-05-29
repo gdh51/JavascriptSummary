@@ -7,12 +7,15 @@
   <title>Document</title>
 </head>
 <body>
-  <iframe src='file:///D:/lesson/JavascriptSummary/BOM,DOM/test1.html'>
-
-  </iframe>
-
+  <input type='file'>
+  <span></span>
   <script>
-    console.log(typeof /sss/g);
+  let btn = document.getElementsByTagName('input')[0];
+  let span = document.getElementsByTagName('span')[0];
+  btn.onchange = function (e) {
+    console.log(this.files);
+    console.log(this.files[0].slice());
+  }
   </script>
 </body>
 </html>
