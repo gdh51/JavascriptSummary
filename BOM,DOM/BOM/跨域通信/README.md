@@ -264,3 +264,15 @@ WebSocket protocol是HTML5一种新的协议。它实现了浏览器与服务器
 原生WebSocket API使用起来不太方便，我们使用`Socket.io`，它很好地封装了webSocket接口，提供了更简单、灵活的接口，也对不支持webSocket的浏览器提供了向下兼容。这里就不在介绍
 
 [参考](https://segmentfault.com/a/1190000011145364)
+
+## 跨站脚本（XSS）
+如果web页面动态生成文档内容，并且这些文档内容是基于用户提交的数据的，而没有通过从中移除任何嵌入的HTML标签来消毒，那么这个web页面很容易遭到跨站脚本攻击。
+
+通常防止XSS攻击的方式是，在使用任何不可信的数据来动态创建文档内容之前，从中移除HTML标签。如：
+```js
+str = str.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+```
+对HTML标签进行转义和过滤删除。
+
+IE8中有一个`toStaticHTML`方法，来移除`<script>`标签而不修改不可执行的HTML。
+HTML5为`iframe`定义了一个`sandbox`属性，实现后运行显示不可信的内容，并自动禁止用脚本。

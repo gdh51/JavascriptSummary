@@ -80,13 +80,13 @@ XHR对象存在一个`xhr.readyState`属性表示请求/响应过程的当前活
 ```js
 xhr.onreadystatechange = function(){
   if(xhr.readyState==4){
-  if(xhr.status>=200&&xhr.status<300||xhr.status==304){
+    if(xhr.status>=200&&xhr.status<300||xhr.status==304){
     //成功响应时做的事
-    }else{
+    } else {
     //失败响应时做的事
+    }
   }
 };
-}
 ```
 
 #### 返回数据的位置
@@ -101,8 +101,6 @@ xhr.abort();
 调用该方法后，XHR对象会停止触发事件，而且*不再允许*访问任何和响应有关的对象属性。
 
 在终止请求后，还应该对XHR对象进行**解引用操作**。由于内存原因，不建议重用XHR对象。
-
-
 
 浏览器在XMLHttpRequest类上定义了它们的HTTP API。这个类的每个实例都表示一个独立的请求/响应对。
 一个HTTP请求由4部分组成：
