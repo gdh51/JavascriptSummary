@@ -11,9 +11,9 @@ DOM2级事件规定事件流包括三个阶段：**事件捕获阶段**、**处�
 ### DOM0级事件处理
 运用 `on + 事件名称` 来为元素指定事件，该事件会在冒泡阶段处理，如 为`btn`按钮指定一个点击事件。每个元素只能指定一个同类型事件
 ```js
-btn.onclick=function(){
-        alert(this.id);
-      }
+btn.onclick = function () {
+  alert(this.id);
+}
 ```
 
 此时`this`指向当前调用的元素（因该事件在元素作用域中运行）
@@ -27,10 +27,10 @@ btn.onclick=function(){
 上述添加的事件只能由`removeEventListener(事件名，callback)`移除添加的事件，注意这里的`callback`函数一定要不能为匿名函数，否则无法移除 应指定命名函数。
 
 #### IE中的事件处理程序
-IE中添加事件只能使用`attachEvent(事件名[需要加on], callback)`来添加一个事件到冒泡阶段。（IE8及其以前只支持事件冒泡） 在用该方法添加的事件会在全局作用域中运行，所以`this`指向`window`。 （该方法也可以添加多个同类型事件，但**执行顺序按反向执行**）
+IE8及其以下中添加事件只能使用`attachEvent(事件名[需要加on], callback)`来添加一个事件到冒泡阶段。（IE8及其以前只支持事件冒泡） 在用该方法添加的事件会在全局作用域中运行，所以`this`指向`window`。 （该方法也可以添加多个同类型事件，但**执行顺序按反向执行**）
 
-如想模拟在捕获阶段触发事件则需要调用`element.setCapture(retargetToElement);`
-该方法接收一个布尔值,当设置为`true`时，所有事件被直接定向到这个元素; 如果是 `false`, 事件也可以在这个元素的子元素上触发。(该方法仅在鼠标事件中有效)
+>如想模拟在捕获阶段触发事件则需要调用`element.setCapture(retargetToElement);`
+>该方法接收一个布尔值,当设置为`true`时，所有事件被直接定向到这个元素; 如果是 `false`, 事件也可以在这个元素的子元素上触发。(该方法仅在鼠标事件中有效)
 
 使用完后需要调用`document.releaseCapture()`来释放该指定元素
 特别说明：该方法只在IE8+与firefox中有效
@@ -40,11 +40,11 @@ IE中添加事件只能使用`attachEvent(事件名[需要加on], callback)`来�
 **DOM0级每种事件只支持一个事件处理程序**。
 
 ## 直接在HTML上指定的事件
-当指定一串javascript代码作为HTML事件处理程序属性时，浏览器会把代码串转换为如下的函数中：类似如下的作用域
+当指定一串Javascript代码作为HTML事件处理程序属性时，浏览器会把代码串转换为如下的函数中：类似如下的作用域
 ```js
 function (event) {
   with(document){
-    with(this.form||{}){
+    with(this.form || {}){
       with(this){
         //代码
       }
@@ -73,15 +73,19 @@ function (event) {
 ## 事件对象
 在事件处理程序中`event`变量，保存着`event`对象（事件对象）
 它具有以下常用属性：（只可读）
-+ bubbles  表明事件是否冒泡
-+ cancelable  表明是否可以取消事件默认行为
-+ **currentTarget**  安装事件处理器的元素(同`this`)
-+ defaultPrevented   是否调用`preventDefault()`函数
-+ eventPhase     调用事件处理程序时的阶段：1表示捕获阶段 2表示处于目标 3表示冒泡阶段(当eventPhase等于2（处于目标阶段时），`this`、`target`、`currentTarget`始终都相等)
-+ target 触发事件处理程序作的目标
-+ isTrusted    `true`表示用户行为触发的事件，`false`表示浏览器自动触发
-+ type   事件类型
-+ view  事件关联的抽象视图，就是`window`对象
++ bubbles：表明事件是否冒泡
++ cancelable：表明是否可以取消事件默认行为
++ **currentTarget**：安装事件处理器的元素(同`this`)
++ defaultPrevented：是否调用`preventDefault()`函数
++ eventPhase：调用事件处理程序时的阶段：
+  + 1表示捕获阶段
+  + 2表示处于目标
+  + 3表示冒泡阶段
+  + (当eventPhase等于2（处于目标阶段时），`this`、`target`、`currentTarget`始终都相等)
++ target：触发事件处理程序作的目标
++ isTrusted：`true`表示用户行为触发的事件，`false`表示浏览器自动触发
++ type：事件类型
++ view：事件关联的抽象视图，就是`window`对象
 
 在事件处理程序内部 `this`始终等于`currentTarget`
 
@@ -97,10 +101,11 @@ function (event) {
 （其他浏览器中`event`在任何方法中都作为`window`的一个属性存在）
 
 IE中的属性与DOM中不同，如下
+属性名|含义
 -|-
 `cancelBubble` | 默认为`false`，设置为`true`时可以取消事件冒泡。
 `returnValue` | 默认为`true`，设置为`false`时可以取消事件默认行为。
-`srcElement` | 触发事件的目标（与DOM target一样）
+`srcElement` | 触发事件的目标（与DOM `target`一样）
 `type ` | 被触发事件的类型
 
 ## 事件取消
@@ -172,7 +177,8 @@ btn.onclick = function () {
 + dbclick：双击鼠标触发。
 这个事件会冒泡。
 
-/////////////////////////////进入子元素无效///////////////////////////
+_______
+
 + mouseenter：鼠标从元素外部首次移至内部时触发，首次是移到子元素上时也会触发绑定事件的父元素。
 这个事件**不冒泡**。
 
@@ -194,16 +200,16 @@ div.addEventListener('mouseenter', function (e) {
 
 第一次触发是在div元素目标阶段触发,第二次在btn元素的捕获阶段触发
 
-///////////////////////////子元素有效//////////////////////////////
+___
 + mouseover：鼠标从一个元素外部首次进入另一个元素边界之内时触发。（移到子元素上也会触发）
 这个事件会冒泡。
 
 mouseout：鼠标从一个元素移到另一个元素时触发。（移到子元素上也会触发）
 这个事件会冒泡。
-////////////////////////////////////////////////////////////////
+___
 mousemove：鼠标在元素内部移动时重复地触发。
 这个事件会冒泡。
-////////////////////////////////////////////////////////////////
+___
 mousedown：按下任意鼠标按钮时触发。
 这个事件会冒泡。
 
