@@ -244,3 +244,5 @@ class Child extends Parent {
   }
 }
 ```
+
+它与组合寄生式继承的主要区别在于父级构造函数的继承顺序。

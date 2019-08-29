@@ -43,9 +43,9 @@ IE8及其以下中添加事件只能使用`attachEvent(事件名[需要加on], c
 当指定一串Javascript代码作为HTML事件处理程序属性时，浏览器会把代码串转换为如下的函数中：类似如下的作用域
 ```js
 function (event) {
-  with(document){
-    with(this.form || {}){
-      with(this){
+  with (document) {
+    with (this.form || {}) {
+      with (this) {
         //代码
       }
     }
@@ -126,7 +126,7 @@ btn.onclick = function () {
 ### 取消事件的继续传播
 通过`event.stopPropagation()`方法来取消事件的传播。（IE9之前中通过设置`cancelBubble = true`来达到效果）
 
-`event.stopImmediatePropagation()`会阻止事件传播的同时并阻止同一对象上的其他相同类型事件处理程序的调用
+`event.stopImmediatePropagation()`会阻止事件传播的同时并*阻止同一对象上的其他相同类型事件处理程序的调用*
 
 **这里的事件传播指上述的三个阶段**
 
@@ -224,7 +224,7 @@ mouseup：释放鼠标按钮时触发。
 `pageY`：事件发生时鼠标**距离页面**的垂直位置。
 （IE8及其以下不支持page属性）
 
-在没有滚动时，`page = client`
+>在没有滚动时，`page = client`
 
 `screenX`：事件发生时鼠标相对于整个屏幕的水平位置。
 `screenY`：事件发生时鼠标相对于整个屏幕的垂直位置。
@@ -232,46 +232,46 @@ mouseup：释放鼠标按钮时触发。
 `offsetX`:鼠标事件发生时，鼠标相对于目标元素的水平位置。（以目标元素border里层为起点）
 `offsetY`:鼠标事件发生时，鼠标相对于目标元素的垂直位置。
 
-修改键：
-`shiftKey`、`ctrlKey`、`altKey`、`metaKey`，这些属性中都为`boolean`值，当触发鼠标事件时相应键被按下时，变为`true`，否则为`false`。
++ 修改键：
+  `shiftKey`、`ctrlKey`、`altKey`、`metaKey`，这些属性中都为`boolean`值，当触发鼠标事件时相应键被按下时，变为`true`，否则为`false`。
 
-相关元素:
-`relatedTarget`属性提供了相关元素的信息，这个属性是`mouseover`与`mouseout`事件的专属值,分别表示鼠标**来自的元素**和**鼠标去往的元素**（IE8之前不支持，IE中，`mouseover`的相关元素属性保存在`fromElement`中，在`mouseout`的相关元素属性保存在`toElement`属性中）
++ 相关元素:
+  `relatedTarget`属性提供了相关元素的信息，这个属性是`mouseover`与`mouseout`事件的专属值,分别表示鼠标**来自的元素**和**鼠标去往的元素**（IE8之前不支持，IE中，`mouseover`的相关元素属性保存在`fromElement`中，在`mouseout`的相关元素属性保存在`toElement`属性中）
 
-鼠标按钮：
-在`mousedown`与`mouseup`事件中，其`event`对象中存在一个`button`属性，记录着是哪一个鼠标按钮触发的事件，0表示左键，1表示鼠标中键，2表示鼠标右键。
-在IE8及其以下版本中，`button`属性的值与`dom`不同（具体百度）
++ 鼠标按钮：
+  在`mousedown`与`mouseup`事件中，其`event`对象中存在一个`button`属性，记录着是哪一个鼠标按钮触发的事件，0表示左键，1表示鼠标中键，2表示鼠标右键。
+  在IE8及其以下版本中，`button`属性的值与`dom`不同（具体百度）
 
-`detail`属性：
-在鼠标事件中，这个属性表示发生了多少次单击。（在同一元素上相继发生一次`mousedown`与`mouseup`算一次单击，从`0`开始计数，如果鼠标在`mousedown`和`mouseup`间移动了位置或在短时间内未点击，则`detail`会被重置为`1`）
-在firefox浏览器中有bug，超过`3`时会循环`2`与`3`
++ `detail`属性：
+  在鼠标事件中，这个属性表示发生了多少次单击。（在同一元素上相继发生一次`mousedown`与`mouseup`算一次单击，从`0`开始计数，如果鼠标在`mousedown`和`mouseup`间移动了位置或在短时间内未点击，则`detail`会被重置为`1`）
+  在firefox浏览器中有bug，超过`3`时会循环`2`与`3`
 
-IE中鼠标事件还有以下属性：（DOM中有，IE名不同）
-`altLeft`、`ctrlLeft`、`shiftLeft`是否按下`alt`与`ctrl`，按下为`true`。
+>IE中鼠标事件还有以下属性：（DOM中有，IE名不同）
+>`altLeft`、`ctrlLeft`、`shiftLeft`是否按下`alt`与`ctrl`，按下为`true`。
 
-鼠标滚轮事件：
-`mousewheel`事件，当滚动鼠标滚轮时发生，其`event`对象包含所有鼠标事件属性外还包含一个`wheelDelta`属性，当向上滚时，`wheelDelta`是120的倍数，下时是-120的倍数。（该事件会冒泡）
++ 鼠标滚轮事件：
+  `mousewheel`事件，当滚动鼠标滚轮时发生，其`event`对象包含所有鼠标事件属性外还包含一个`wheelDelta`属性，当向上滚时，`wheelDelta`是120的倍数，下时是-120的倍数。（该事件会冒泡）
 
-firefox中该事件名为`DOMMouseScroll`，向上滚为-3的倍数，向下为3的倍数，这个属性保存在`detail`中（这个`detail`在该事件中与点击次数无关）。
-该属性在HTML5中被规范为`wheel`，目前只有IE没有该标准属性
+>firefox中该事件名为`DOMMouseScroll`，向上滚为-3的倍数，向下为3的倍数，这个属性保存在`detail`中（这个`detail`在该事件中与点击次数无关）。
+>该属性在HTML5中被规范为`wheel`，目前只有IE没有该标准属性
 
 在鼠标事件中，IE和firefox(firefox中有但是无效)有两个独有的方法，使用后可以捕获到移动到事件处理程序外的鼠标移动。（相当于事件捕获）该方法为`element.setCapture()`，该方法接收一个布尔值，`true`时表示该元素会捕获其子元素的的鼠标事件，当为`false`时，当前元素不会捕获其内子元素的鼠标事件
 `element.releaseCapture()`:为指定元素接触事件锁定。
 
 ### 键盘事件
-`textInput`事件：在可编辑区域且用户按下实际能够输入字符的键时触发，也可以通过复制粘贴剪切和粘贴、拖放等方式触发。拥有一个`data`属性表示按下的是键的字符。（区分大小写）（firefox不支持）
++ `textInput`事件：在可编辑区域且用户按下实际能够输入字符的键时触发，也可以通过复制粘贴剪切和粘贴、拖放等方式触发。拥有一个`data`属性表示按下的是键的字符。（区分大小写）（firefox不支持）
 
-在该事件中IE的事件名称为`textinput`且支持一个`inputMethod`方法表示通过什么方式输出的字符。
+  >在该事件中IE的事件名称为`textinput`且支持一个`inputMethod()`方法表示通过什么方式输出的字符。
 
-`input`事件：文本插入元素后触发事件。（IE中为`propertychange`）
++ `input`事件：文本插入元素后触发事件。（IE中为`propertychange`）
 
-`keydown`：当用户按下键盘任意键时触发。
++ `keydown`：当用户按下键盘任意键时触发。
 
-`keypress`：当用户按下键盘上的字符键并生成字符时触发，esc也会触发该事件。
++ `keypress`：当用户按下键盘上的字符键并生成字符时触发，`esc`也会触发该事件。
 
-`keyup`：当用户释放键盘上的键时触发。
++ `keyup`：当用户释放键盘上的键时触发。
 
-*当按下一个字符时，首先触发keydown，然后触发keypress，最后释放时触发keyup*
+*当按下一个字符时，首先触发`keydown`，然后触发`keypress`，最后释放时触发`keyup`*
 
 `keydown`与`keypress`会在文本框发生变换前触发
 
@@ -300,7 +300,7 @@ I8及其以上：`getModifierState(字符串)`接受一个字符串`Shift`、`Co
 **全部浏览器**：`key`的值为 按下字符键的文本（如“k”），按下非字符键时为其键名（如tab）。
 **IE8及其以上**：`char`的值字符部分为字符本身（同`key`），非字符部分为空。
 
-### 变动事件
+### 变动事件(先已移除标准, 使用MutationObserver代替)
 `DOMSubtreeModified`：当DOM结构发生变动时触发。任何其他事件都会触发该事件。
 `DOMNodeInserted`：在一个节点作为子节点插入另一个节点中时触发。（冒泡）
 `DOMNodeInsertedIntoDocument`：在一个节点插入文档之后触发。（不冒泡）
@@ -310,6 +310,7 @@ I8及其以上：`getModifierState(字符串)`接受一个字符串`Shift`、`Co
 `DOMCharacterDataModified`：在文本节点值发生变化后触发。
 
 当文档发生变换的事件中，有一个`relatedNode`属性保存着目标节点的父节点。
+[MutationObserver详情](.././BOM,DOM/DOM#MutationObserver)
 
 ### HTML5新增事件
 
@@ -336,17 +337,17 @@ I8及其以上：`getModifierState(字符串)`接受一个字符串`Shift`、`Co
 2. `drag`：在元素被拖动期间会持续触发该事件。
 3. `dragend`：当释放目标后会触发该事件。
 
-当一个元素被拖放到一个有效的放置目标上时，会依次触发下列三个事件（事件目标都是作为*放置目标的元素*，这里的目标区域指注册该事件的元素）
+>当一个元素被拖放到一个有效的放置目标上时，会依次触发下列三个事件（事件目标都是作为*放置目标的元素*，这里的目标区域指注册该事件的元素）
 1.	`dragenter`：当目标进入放置目标区域就会触发该事件。（冒泡）
 2.	`dragover`：当目标在放置目标区域范围移动时就会持续触发该事件。
 3.	`dragleave`或`drop`：当元素被拖出目标区域就会触发`dragleave`事件，如果元素在目标区域被放置则会触发`drop`事件。（冒泡）
 
 当拖动元素进入无效放置目标时，光标会显示为（圆环中一条反斜杠）表示不能放置。因为元素*默认是不允许放置*，在该类元素上永远不会触发`drop`事件。
 
-为解决这个问题，只需要阻止`dragover`事件中的默认行为。（浏览器默认拖放行为是打开拖放元素相对应的链接）。
+>为解决这个问题，只需要阻止`dragover`事件中的默认行为。（浏览器默认拖放行为是打开拖放元素相对应的链接）。
 
-在拖放事件中，有一个`dataTransfer`对象用于实现在拖放操作中的数据交换，它拥有以下属性。（保存在该对象中的数据只能在drop事件中获取）
-+ dropEffect:获取/设置实际的放置效果，它应该始终设置成` effectAllowed `的可能值之一 用于知道被拖动的元素能够执行哪种放置行为。（这个属性只能在ondragenter事件中针对放置目标来设置，并且该值的表现形式为鼠标在放置目标上的样式）共有以下四个值：
+在拖放事件中，有一个`dataTransfer`对象用于实现在拖放操作中的数据交换，它拥有以下属性。（保存在该对象中的数据只能在`drop`事件中获取）
++ dropEffect:获取/设置实际的放置效果，它应该始终设置成` effectAllowed `的可能值之一 用于知道被拖动的元素能够执行哪种放置行为。（这个属性只能在`ondragenter`事件中针对放置目标来设置，并且该值的表现形式为鼠标在放置目标上的样式）共有以下四个值：
   + none：不能把拖动元素放这里。（默认值）
   + move：应该把拖动的元素移动到放置目标
   + copy：应该把拖动的元素复制到放置目标
@@ -379,7 +380,6 @@ I8及其以上：`getModifierState(字符串)`接受一个字符串`Shift`、`Co
 `setDragImage(element,x,y)`：指定一幅图像，当拖动发生时，显示在光标下方。
 共有三个参数，第一个表示要显示的HTML元素，后两个表示光标在图像中的x、y坐标。
 HTML元素可以为一幅图像，也可以为其他的元素。
-
 
 ### 模拟事件
 在document上可以用`createEvent(string)`创建一个event对象，接受一个参数，表示创建事件的类型的字符串（`UIEvents`、`MouseEvents`、`MutationEvents`、`HTMLEvents`）

@@ -9,25 +9,25 @@
 
 `CSSStyleSheet`对象有`insertRule()`和`deleteRule()`方法来添加和删除规则（IE为`addRule()`、`removeRule()`）第一个参数为添加的样式字符串，第二个为插入的位置。如：
 ```js
-document.styleSheets[0].insertRule("H1{font-weight:bold;}",0);
+document.styleSheets[0].insertRule("H1{font-weight:bold;}", 0);
 //（IE中参数为选择器文本，和样式的文本）
 ```
 
 `CSSStyleSheet`对象有一个`cssRuleList`类数组对象，包含样式表的所有样式（IE中该属性为`rules`，实际上主流浏览器两个属性都有）
 
-`cssRuleList`类数组对象中的元素为`CSSStyleRule`对象，每一个代表一个CSS样式
+`cssRuleList`类数组对象中的元素为`CSSStyleRule`对象，每一个代表一个具体的CSS样式
 
 `CSSStyleRule`对象的`selectText`属性是CSS选择器的字符串,它的`cssText`属性表示整个完整的样式表达式
 
 下面梳理下结构：
-
+<pre>
 |--StyleSheetList
    |--CSSStyleSheet
       |--cssRuleList
          |--CSSStyleRule
-
+</pre>
 ### CSSStyleSheet对象
-表示文档中link元素或style元素的样式表信息,拥有以下几个常用方法
+表示文档中`<link>`元素或`<style>`元素的样式表信息,拥有以下几个常用方法
 
 #### insertRule(str, index)
 向当前样式表插入一条样式规则,两个参数都是必须的,第一个表示一条样式信息,第二个表示插入的位置。(IE8+才存在,IE8及其之下为`addRule()`)
@@ -80,5 +80,3 @@ HTML5中为每个元素定义了`classList`属性。这个属性是`DOMTokenList
 
 ### toggle(arg)
 检查一个类是否存在，不存在时就添加;存在时就删除。当传入1个以上参数时只会添加第一个参数的类名，且只执行添加操作
-
-
