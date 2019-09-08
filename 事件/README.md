@@ -302,6 +302,17 @@ I8及其以上：`getModifierState(字符串)`接受一个字符串`Shift`、`Co
 **全部浏览器**：`key`的值为 按下字符键的文本（如“k”），按下非字符键时为其键名（如tab）。
 **IE8及其以上**：`char`的值字符部分为字符本身（同`key`），非字符部分为空。
 
+### 复合事件
+当我们通过输入法在可编辑文本框中输入拼音时, 会触发复合事件(也会触发`input`事件), 复合事件有3个：
++ `compositionstart`：事件触发于一段文字的输入之前（类似于 `keydown `事件，但是该事件仅在若干可见字符的输入之前，而这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词）。
++ `compositionupdate`: 事件触发于字符被输入到一段文字的时候（这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词）
++ `compositionend`：当文本段落的组成完成或取消时, `compositionend` 事件将被触发 (具有特殊字符的触发, 需要一系列键和其他输入, 如语音识别或移动中的字词建议)。
+
+当一开始输入时，相对于input事件, 它们的触发顺序为：
+`compositionstart` -> `compositionupdate` -> `input` -> `compositionend`
+
+我们常用`compositionstart`与`compositionend`来处理对中文拼音的输入, 因为当输入拼音时(并未完全拼入), 会不断触发`input`事件导致效验输入框的逻辑提前报错，通过复合事件的配合, 我们可以在输入拼音时，禁用`input`事件，在`compositionend`中来验证输入框中的值
+
 ### 变动事件(先已移除标准, 使用MutationObserver代替)
 `DOMSubtreeModified`：当DOM结构发生变动时触发。任何其他事件都会触发该事件。
 `DOMNodeInserted`：在一个节点作为子节点插入另一个节点中时触发。（冒泡）
