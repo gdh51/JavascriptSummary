@@ -165,3 +165,6 @@ function move(p) {
 
 ### Web计时/浏览器渲染性能
 [详情](./浏览器性能API)
+
+### H5 prefetch预加载
+[详情](./预加载API)
