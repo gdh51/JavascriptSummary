@@ -8,7 +8,7 @@
 ### 同源策略限制
 1. Cookie、LocalStorage 和 IndexDB 无法读取
 2. DOM 和 Js对象无法获得
-3. Ajax 请求不能发送
+3. 无法用js发送非同源的AJAX请求 。更准确的说，js可以向非同源的服务器发请求，但是服务器返回的数据会被浏览器拦截。
 
 ## 解决方法
 
@@ -276,3 +276,4 @@ str = str.replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
 IE8中有一个`toStaticHTML`方法，来移除`<script>`标签而不修改不可执行的HTML。
 HTML5为`iframe`定义了一个`sandbox`属性，实现后运行显示不可信的内容，并自动禁止用脚本。
+[更多浏览器安全问题](./浏览器安全问题)
