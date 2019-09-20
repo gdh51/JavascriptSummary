@@ -113,6 +113,71 @@ self.addEventListener('fetch', function (event) {
 新更新的`worker`处于*等待激活*状态,当实际的网页关掉并重新打开时，浏览器会将原先的`Service Worker`替换成新的，然后在` install `事件之后触发` activate `事件。如果你需要清理缓存或者针对原来的SW执行维护性操作，`activate `事件就是做这些事情的绝佳时机。
 
 ## 延迟响应请求
-Sync事件让你可以先将网络相关任务延迟到用户有网络的时候再执行。这个功能常被称作“背景同步”。这功能可以用于保证任何用户在离线的时候所产生对于网络有依赖的操作，最终可以在网络再次可用的时候抵达它们的目标。
+`Sync`事件让你可以先将网络相关任务延迟到用户有网络的时候再执行。这个功能常被称作“背景同步”。这功能可以用于保证任何用户在离线的时候所产生对于网络有依赖的操作，最终可以在网络再次可用的时候抵达它们的目标。
 
-[](https://zhuanlan.zhihu.com/p/28461857)
+首先我们需要在浏览器中注册为该`ServiceWorkerRegistration `对象注册一个自定义名称的`sync`事件事件
+```js
+navigator.serviceWorker.ready
+    .then(registration => {
+        document.getElementById('submit').addEventListener('click', () => {
+        registration.sync.register('submit').then(() => {
+            console.log('sync registered!');
+        });
+    });
+});
+```
+
+之后我们需要在`worker`文件中，给`worker`注册一个`sync`事件, 所有注册的`sync`事件都会在这里触发，此时我们需要通过判断事件对象的`tag`属性(即我们自定义的名称)，来执行相应的逻辑
+```js
+self.addEventListener('sync', function (event) {
+    if (event.tag === 'submit') {
+        console.log('sync!');
+    }
+});
+```
+
+**注意：即使我们触发多次同一个名称的sync事件，在联网后，也只会触发一次**
+
+### sync事件触发的时机
+当网络通畅时，`sync`事件会立即触发并执行我们自定义的任务;而如果用户离线了，`sync `事件会在网络恢复后第一时间触发。(`Chrome`开发者工具的`Network`选项卡里模拟网络断开是不会触发` sync `事件的)
+
+
+## 消息推送
+在`worker`中，可以通过`push`事件以及浏览器的`Push API`来实现消息的推送。
+
+### 消息提醒
+实现消息的推送首先要在浏览器中注册以下事件：
+```js
+// 向用于请求推送的权限
+Notification.requestPermission(permission => {
+    console.log('permission:', permission);
+});
+
+// 然后通过以下操作来实现消息的推送
+// 显示消息提醒
+function displayNotification() {
+    if (Notification.permission == 'granted') {
+        navigator.serviceWorker.getRegistration()
+            .then(registration => {
+                registration.showNotification('this is a notification!');
+            });
+    }
+}
+```
+
+同时我们可以在worker中注册以下事件来查看用户的点击情况：
+```js
+// sw.js
+self.addEventListener('notificationclick', event => {
+    // 消息提醒被点击的事件
+    console.log('mention');
+});
+
+self.addEventListener('notificationclose', event => {
+    // 消息提醒被关闭的事件
+    console.log('infoClose');
+});
+```
+你需要先向用户寻求让你的网页产生消息提醒的权限。之后，你就可以弹出提示信息，然后处理某些事件，比如用户把消息关掉的事件。
+
+[参考](https://zhuanlan.zhihu.com/p/28461857)

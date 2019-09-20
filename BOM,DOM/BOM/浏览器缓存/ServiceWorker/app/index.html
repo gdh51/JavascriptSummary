@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <div>其实我是有内容的</div>
+    <div id="submit">其实我是有内容的</div>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js').then(function (registration) {
@@ -21,6 +21,32 @@
                 // registration failed :(
                 console.log('ServiceWorker registration failed: ', err);
             });
+        }
+
+        // 在点击事件中注册一个全局的 ServiceWorkerRegistration 对象身上调用 sync.register
+        navigator.serviceWorker.ready
+            .then(registration => {
+                document.getElementById('submit').addEventListener('click', () => {
+                    registration.sync.register('submit').then(() => {
+                        console.log('sync registered!');
+                    });
+                });
+            });
+
+        // app.js
+        // 向用于请求推送的权限
+        Notification.requestPermission(permission => {
+            console.log('permission:', permission);
+        });
+
+        // 显示消息提醒
+        function displayNotification() {
+            if (Notification.permission == 'granted') {
+                navigator.serviceWorker.getRegistration()
+                    .then(registration => {
+                        registration.showNotification('this is a notification!');
+                    });
+            }
         }
     </script>
 </body>
