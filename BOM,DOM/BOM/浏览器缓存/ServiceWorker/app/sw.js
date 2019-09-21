@@ -35,12 +35,45 @@ self.addEventListener('fetch', function (event) {
                 return response;
             }
 
-            // 否则发送真实请求
-            return fetch(event.request);
+            let fetchRequest = event.request.clone();
+
+            // 否则发送真实请求, 并对其响应进行缓存
+            return fetch(fetchRequest).then(response => {
+
+                // 如果返回不成功或状态码不为200或请求不是自身发送则不进行缓存
+                if (!response || response.status !== 200 || response.type !== 'basic') {
+                    return response;
+                }
+
+                let responseToCache = response.clone();
+
+                // 打开缓存表更替资源
+                caches.open(CACHE_NAME).then(cache => {
+                    cache.put(event.request, responseToCache);
+                });
+
+                return response;
+            });
         })
     );
+});
 
-    // event.respondWith(res);
+// 在activate事件中将白名单之外的缓存去掉
+self.addEventListener('activate', event => {
+
+    // 缓存的白名单，不进行删除
+    let cacheWhiteList = urlsToCache;
+
+    event.waitUntil(
+        caches.keys().then(cacheNames =>
+            Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheWhiteList.indexOf(cacheName) === -1) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            ))
+    )
 });
 
 // 监听一个sync事件，在SyncEvent对象上来检查tag是否匹配我们在点击事件中自定义的事件标签

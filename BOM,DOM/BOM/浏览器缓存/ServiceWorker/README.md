@@ -106,11 +106,89 @@ self.addEventListener('fetch', function (event) {
 
 紧接着，调用` event.waitUntil() `来在SW被终止前执行一个` Promise `异步流程。在这里我们先做一个网络请求然后再将其缓存。这个异步操作完成后，`waitUntil`才会解析完成，整个操作才可以终止。
 
+### 缓存新的响应
+当我们在`fetch`事件中未命中缓存时，可以将新的请求添加到缓存中去：
+```js
+self.addEventListener('fetch', function (event) {
+
+    let res = event.respondWith(
+
+        // 匹配缓存
+        caches.match(event.request)
+        .then(function (response) {
+
+            // 命中缓存就返回响应
+            if (response) {
+                return response;
+            }
+
+            let fetchRequest = event.request.clone();
+
+            // 否则发送真实请求, 并对其响应进行缓存
+            return fetch(fetchRequest).then(response => {
+
+                // 如果返回不成功或状态码不为200或请求不是自身发送则不进行缓存
+                if (!response || response.status !== 200 || response.type !== 'basic') {
+                    return response;
+                }
+
+                let responseToCache = response.clone();
+
+                // 打开缓存表更替资源
+                caches.open(CACHE_NAME).then(cache => {
+                    cache.put(event.request, responseToCache);
+                });
+
+                return response;
+            });
+        })
+    );
+});
+```
+
+这里做了以下操作：
+1. 在`fetch`请求中成功回调中：
+   1. 确保响应有效
+   2. 确保响应为`200`
+   3. 确保响应类型为`basic`(不为第三方请求)
+2. 如果通过检查，则克隆响应。 这样做的原因在于，**该响应是数据流， 因此主体只能使用一次**。 由于我们想要返回能被浏览器使用的响应，并将其传递到缓存以供使用，因此需要克隆一份副本。我们将一份发送给浏览器，另一份则保留在缓存。
 ## 更新worker文件
 当你更新你的SW文件`（/sw.js）`，浏览器会检测到并在开发者工具中如下展示：
 ![update](./img/update.png)
 
-新更新的`worker`处于*等待激活*状态,当实际的网页关掉并重新打开时，浏览器会将原先的`Service Worker`替换成新的，然后在` install `事件之后触发` activate `事件。如果你需要清理缓存或者针对原来的SW执行维护性操作，`activate `事件就是做这些事情的绝佳时机。
+并附有以下过程
+1. 当新的`worker`文件与之前的文件存在字节的差异时，就会被视为新的`worker`
+2. 新的`worker`会启动，且会触发`install`
+3. 此时旧的`worker`仍控制着当前页面，因此新的`worker`会进入`waiting`状态
+4. 当当前页面关闭或刷新时，旧的`worker`会被终止，新的`worker`会取得控制权
+5. 新的`worker`取得控制权后会触发`activate`事件
+
+### activate事件
+出现在` activate `回调中的一个常见任务是缓存管理。 您希望在` activate `回调中执行此任务的原因在于：如果您在安装步骤中清除了全部旧缓存，则所有控制当前页面的任何旧` Service Worker `将无法从缓存中提供文件，此时我们可以通过`activate`事件来将其添加到不清除的白名单的缓存来避免清除
+
+>比如说我们有一个名为 `'my-site-cache-v1'` 的缓存，我们想要将该缓存拆分为一个页面缓存和一个博文缓存。 这就意味着在安装步骤中我们创建了两个缓存：`'pages-cache-v1' `和 `'blog-posts-cache-v1'`，且在激活步骤中我们要删除旧的` 'my-site-cache-v1'`。
+
+以下代码将执行此操作，具体做法为：遍历` Service Worker `中的所有缓存，并删除未在缓存白名单中定义的任何缓存。
+
+```js
+// 在activate事件中将白名单之外的缓存去掉
+self.addEventListener('activate', event => {
+
+    // 缓存的白名单，不进行删除
+    let cacheWhiteList = urlsToCache;
+
+    event.waitUntil(
+        caches.keys().then(cacheNames =>
+            Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheWhiteList.indexOf(cacheName) === -1) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            ))
+    )
+});
+```
 
 ## 延迟响应请求
 `Sync`事件让你可以先将网络相关任务延迟到用户有网络的时候再执行。这个功能常被称作“背景同步”。这功能可以用于保证任何用户在离线的时候所产生对于网络有依赖的操作，最终可以在网络再次可用的时候抵达它们的目标。
@@ -180,4 +258,12 @@ self.addEventListener('notificationclose', event => {
 ```
 你需要先向用户寻求让你的网页产生消息提醒的权限。之后，你就可以弹出提示信息，然后处理某些事件，比如用户把消息关掉的事件。
 
-[参考](https://zhuanlan.zhihu.com/p/28461857)
+## 缺点
++ **如果安装失败，也不会显示**
+    如果` Worker`注册后未在` chrome://inspect/#service-workers `或 `chrome://serviceworker-internals `中显示，则有可能是引发错误或向` event.waitUntil() `发送被拒绝的 `promise `而导致无法安装。
+
+    要解决该问题，请转至 `chrome://serviceworker-internals `并勾选`“Open DevTools window and pause JavaScript execution on service worker startup for debugging”`，然后将调试程序语句置于安装事件开始处。 这与未捕获异常中的暂停共同揭露问题。
++ **fetch()方法默认不携带凭证**
+
+[参考1](https://zhuanlan.zhihu.com/p/28461857)
+[参考2](https://developers.google.cn/web/fundamentals/primers/service-workers/)
