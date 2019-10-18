@@ -3,7 +3,7 @@
 ## 元素样式表(link and style)
 当使用`style`和`link`元素表示*css样式*时，可以用`document.styleSheets`查询当前文档的所有样式表,它是一个只读的类数组(`StyleSheetList对象`)对象，它包含`CSSStyleSheet`对象，表示与文档关联在一起的样式表。
 
-当然也可以直接通过该元素的sheet属性来查询`CSSStyleSheet`(IE8及其以下为`styleSheet`属性)
+>当然也可以直接通过该元素的sheet属性来查询`CSSStyleSheet`(IE8及其以下为`styleSheet`属性)
 
 如果定义或引用了`style`或`link`元素设置`title`属性值，则该属性值对应`CSSStyleSheet`对象的`title`属性。这个对象定义了一个`disabled`的属性，表示是否禁用该样式表。
 

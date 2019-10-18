@@ -108,13 +108,13 @@ XHR对象提供了操作 **请求头部** 和 **响应头部** 的方法，默�
 
 ##### 自定义请求头部
 `xhr.setRequestHeader()`：可以设置自定义的请求头部信息，接收两个参数：头部字段的名称和头部字段的值。多次调用不会取代新值，但不能指定`Content-Length`、`Date`、`Referer`或`User-Agent`头，还有以下头：（必须在调用`xhr.open()`方法之后且调用`xhr.send()`方法前调用）
-Accept-Charset | Content-Transfer-Encoding | TE
--|-|:-
-Accept-Encoding | Date | Trailer
-Connertion | Expect | Transfer-Encoding
-Content-Length | Host | Upgrade
-Cookie | Keep-Alive | User-Agent
-Cookie2 | Referer | Via
+| Accept-Charset  | Content-Transfer-Encoding | TE                |
+| --------------- | ------------------------- | :---------------- |
+| Accept-Encoding | Date                      | Trailer           |
+| Connertion      | Expect                    | Transfer-Encoding |
+| Content-Length  | Host                      | Upgrade           |
+| Cookie          | Keep-Alive                | User-Agent        |
+| Cookie2         | Referer                   | Via               |
 
 我们能为请求指定`Authorization`头，但通常不需要。如果请求一个受密码保护的URL，把用户名和密码作为第四个和第五个参数传递给`xhr.open()`方法，XML对象将会自动设置合适的头部。
 

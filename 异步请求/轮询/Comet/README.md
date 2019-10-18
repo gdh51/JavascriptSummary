@@ -35,7 +35,7 @@ function polling () {
 ![基于Ajax的长轮询与短轮询在时间上的区别](../img/diff.jpg)
 
 ### 基于http流的长轮询
-通过在HTML页面里面嵌入一个隐藏的`<iframe>`, 然后给该标签的src属性指定一个长连接请求, 服务器端则可以不停地返回数据，相对于第一种方式，这种方式跟传统的服务器推则更接近。
+通过在HTML页面里面嵌入一个隐藏的`<iframe>`, 然后给该标签的`src`属性指定一个长连接请求, 服务器端则可以不停地返回数据，相对于第一种方式，这种方式跟传统的服务器推则更接近。
 
 在第一种方式中，浏览器在收到数据后会直接调用JS回调函数，但是这种方式该如何响应数据呢？可以通过在返回数据中嵌入JS脚本的方式，如`<script type="text/javascript">js_func('data from server')</script>`，服务器端将返回的数据作为回调函数的参数，浏览器在收到数据后就会执行这段JS脚本。
 
@@ -44,9 +44,9 @@ function polling () {
 ## Websocket：一个独立的持久连接上提供全双工、双向通信网络技术
 >Websocket是一个全新的、独立的协议，基于TCP协议，与http协议兼容、却不会融入http协议。
 
-在创建Web Socket之后，会有一个HTTP请求发送到浏览器以发起连接。在取得服务器响应后，建立的连接会使用HTTP升级从HTTP
+在创建`Web Socket`之后，会有一个HTTP请求发送到浏览器以发起连接。在取得服务器响应后，建立的连接会使用HTTP升级从HTTP
 
-协议交换为Web Socket协议。
+协议交换为`Web Socket`协议。
 此时URL协议会有不同：未加密的连接是`ws：//`；加密的连接为`wss：//`。
 ```js
 var socket = new WebSocket("ws://www.example.com/server.php");
@@ -133,6 +133,5 @@ id：1
 + Websocket相比与SSE存在的优势在于WebSocket是二进制协议，而SSE是文本协议（通常使用UTF-8编码）。当然，我们可以通过SSE连接传输二进制数据：在SSE中，只有两个具有特殊意义的字符，它们是CR和LF，而对它们进行转码并不难。但用SSE传输二进制数据时数据会变大，如果需要从服务端到客户端传输大量的二进制数据，最好还是用WebSocket。
 
 + Websocket相较于SSE在最大优势在于其是双向流通的, 无论从哪一端发送数据的开销都一样;用SSE时，一般通过一个独立的Ajax请求从客户端向服务端传送数据，所以开销会多一点。在频率不高的通信中两种区别不大。
-
 
 [参考](http://www.52im.net/thread-334-1-1.html)

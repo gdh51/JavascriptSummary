@@ -28,7 +28,7 @@ var arr = new Array(10); // arr = [undefined x 10]
 
 ### 数组元素添加
 + 为新索引赋值
-+ 用`push()`方法向数组末尾增加一个或多个元素。**这个操作和给数组`a[a.length]`赋值是等价的**，可以使用`unshift()`从数组首部插入一个元素。
++ 用`push()`方法向数组末尾增加一个或**多个**元素。**这个操作和给数组`a[a.length]`赋值是等价的**，可以使用`unshift()`从数组首部插入一个元素或**多个**元素。
 
 ### 数组元素删除
 + 可以像删除对象属性一样用`delete`运算符来删除数组元素，但删除后删除位置会没有元素显示为`undefined`，且该数组会成为稀疏数组。
@@ -252,17 +252,17 @@ ArrayBuffer.isView(ints);//true
 ### TypedArray对象
 `TypedArray`对象：同一段内存，不同数据有不同的解读方式，这就叫做“视图”（view）。`TypedArray`用来生成内存的视图，通过9个构造函数:
 
-名称 | 含义
--|-
-Int8Array | 有符号字节
-Uint8Array | 无符号字节
-Uint8ClampedArray | 8位无符号整数，长度1个字节，溢出处理不同。
-Int16Array | 有符号16位短整数
-Uinit16Array | 无符号16位短整数
-Int32Array | 有符号32位整数
-Unit32Array | 无符号32位整数
-Float32Array | 32位浮点数值
-Float64Array | 64位浮点数值：Javascript中常规数值
+| 名称              | 含义                                       |
+| ----------------- | ------------------------------------------ |
+| Int8Array         | 有符号字节                                 |
+| Uint8Array        | 无符号字节                                 |
+| Uint8ClampedArray | 8位无符号整数，长度1个字节，溢出处理不同。 |
+| Int16Array        | 有符号16位短整数                           |
+| Uinit16Array      | 无符号16位短整数                           |
+| Int32Array        | 有符号32位整数                             |
+| Unit32Array       | 无符号32位整数                             |
+| Float32Array      | 32位浮点数值                               |
+| Float64Array      | 64位浮点数值：Javascript中常规数值         |
 
 通过以上构造函数生成的`TypedArray`函数，可以像数组一样用索引来读取数组元素，所有数组方法都能使用，并有`length`属性，这种称为类型化数组。
 
