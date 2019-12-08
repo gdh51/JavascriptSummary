@@ -1,33 +1,52 @@
 # Web计时/浏览器渲染性能
-Web计时机制(渲染性能)的核心是`window.performance`对象，该对象有两个表示对象的属性：
-其中一个为`performance.navigation`对象,它有以下属性
+
+Web计时机制(渲染性能)的核心是`window.performance`对象，该对象有三个表示对象的属性：
+
++ [navigation](#performancenavigation%e5%af%bc%e8%88%aa%e5%af%b9%e8%b1%a1)
++ [memory](#performancememory%e6%b5%8f%e8%a7%88%e5%99%a8%e5%a0%86%e6%a0%88%e5%af%b9%e8%b1%a1)
++ [timing](#performancetiming%e7%bd%91%e9%a1%b5%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f)
+
+## performance.navigation——导航对象
+
+其中一个为`performance.navigation`对象,它有以下属性:
+
 + `redirectCount`：页面加载前的重定向次数
 + `type`：刚刚发生的导航类型：
-  + 1: 表示页面重载过
-  + 2: 表示通过后退或前进按钮打开的
-  + 0: 表示第一次加载
+  + `0`：页面通过点击一个链接、提交一个表单或者直接在地址栏输入`URL`，跳转或定位过来的。
+  + `1`: 表示页面重载操作访问的
+  + `2`: 表示当前页是通过浏览器历史记录，或后退或前进按钮打开的(即和浏览器历史记录有关的方式跳转的)
+  + `255`：上述之外情况访问网页时，都为该值
 
+____
 另外一个为`performance.timing`对象，该对象的属性都是时间戳。（从软件纪元开始经过的毫秒数），重点介绍下这一个对象：
 
-## performance.timing
+## performance.timing——网页生命周期
+
 该对象首先拥有以下属性，这些属性包括了从请求页面起到页面加载完成的各个环节的时间戳：
 
-+ `navigationStart`：开始导航到当前页面的时间
+![浏览器加载时段流水图](./img/浏览器加载时段流水图.svg)
+
++ `navigationStart`：开始浏览到当前页面的快照时间，或者为当前浏览器卸载前一个页面，或者不用执行卸载，开始获取新内容时的时间快照。
 + `unloadEventStart`：前一个页面的`unload`事件开始的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值；
 + `unloadEventEnd`：前一个页面`unload`事件结束的时间。
-+ `redirectStart、redirectEnd`：到当前页面的重定向开始或结束的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值
-+ `fetchStart`：开始通过`HTTP GET`取得页面的时间
-+ `domainLookupStart、domainLookupEnd`：开始查询当前页面DNS的时间或查询当前页面DNS结束的时间
-+ `connectStart、connectEnd`：浏览器尝试连接服务器的时间、服务器成功连接到服务器的时间。
-+ `secureConnectionStart`：浏览器尝试以SSL方式连接服务器的时间。
-+ `requestStart、responseStart`：浏览器开始请求页面的时间、浏览器接收到页面第一个字节的时间。
-+ `resopseEnd`：浏览器接收页面所有内容的时间
-+ `domLoading`：`document.readyState`变为`loading`的时间
-+ `domInteractive`：`document.readyState`变为`interactive`的时间
++ `redirectStart、redirectEnd`：到当前页面的重定向开始或结束的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值，**这两个值的差值即HTTP重定向所消耗的时间**
++ `fetchStart`：浏览器第一次检查用于存储请求资源的缓存时的开始时间，要计算缓存加载的全部时间，即`domainLookupStart - fetchStart`
++ `domainLookupStart、domainLookupEnd`：开始查询当前页面DNS的时间或查询当前页面DNS结束的时间，**这两个值的差值即DNS查询的完整时间**
++ `connectStart、connectEnd`：浏览器尝试与服务器建立TCP连接的时间、服务器与服务器完成TCP连接的时间，**这两个值的差值即建立TCP连接的完整时间**。
++ `secureConnectionStart`：浏览器尝试以SSL方式连接服务器的开始时间，**该值与`connectEnd`的差值即建立SSL隧道的完整时间**。
++ `requestStart、responseStart`：浏览器发送HTTP请求的时间快照或浏览器第一次对服务器的响应进行注册时的时间快照。
++ `responseEnd`：浏览器完成接收服务器发出的响应的时间快照，**`responseEnd - connectStart`即完成一次HTTP往返所花费的总时间(包括建立HTTP请求的时间)**。
++ `domLoading`：`document.readyState`变为`loading`的时间，文档开始加载的时间
++ `domComplete`：文档加载完成的时间快照，**`domComplete - domLoading`即页面渲染所花费的时间**，**`domComplete - navigationStart`即加载页面所花费的时间(第一次请求到页面完全加载完成)**。
++ `domInteractive`：`document.readyState`变为`interactive`的时间，此时用户可以与页面进行交互了。
 + `domContentLoadedEventStart、domContentLoadedEventEnd`：发生`DOMContentLoaded`事件的时间、`DOMContentLoaded`事件已经发生且执行完所有事件程序的时间
++ `loadEventEnd`：页面加载事件完成时触发该事件
++ `loadEventStart`：页面加载事件开始时触发该事件
 
 ### performance.getEntriesByType(type)
+
 该方法用于返回一个指定type类型的属性获取一个该类型所有性能对象的数组，其中type可以为：
+
 + `frame/navigation`：返回`performance.timing`对象，包含从输入URL到页面加载完成的时间
 + `resource`：已解析的请求资源的URL对象的数组
 + `mark`：通过调用`performance.mark()`创建标记时使用的名称。
@@ -37,6 +56,7 @@ Web计时机制(渲染性能)的核心是`window.performance`对象，该对象�
 这里我们重点关注一下通过`performance.getEntriesByType('navigation')`获取到的`performance.timing`对象，该对象与直接从`performance.timing`中返回的对象的不同在于，计算时间起点不一样，前者以0为起点，后者以软件纪元的时间为起点。
 
 函数返回的对象具体为：
+
 ```js
 {
   "connectEnd": 64.15495765894057,
@@ -74,6 +94,7 @@ Web计时机制(渲染性能)的核心是`window.performance`对象，该对象�
 ![详情介绍图](./img/timestamp-diagram.svg)
 
 具体有以下时间段：
+
 + DNS查询耗时：`domainLookupEnd - domainLookupStart`
 + TCP连接耗时：`connectEnd - connectStart`
 + request请求耗时(直到响应)：`responseEnd - requestStart`
@@ -89,16 +110,21 @@ Web计时机制(渲染性能)的核心是`window.performance`对象，该对象�
 按照上图就可以算出资源具体加载的时间，这里就不做过多的描述了
 
 ## performance.now()
-`performance.now()`与`Date.now()`不同的是，返回了以微秒（百万分之一秒）为单位的时间，更加精准。
 
-并且与`Date.now()`会受系统程序执行阻塞的影响不同，`performance.now()`的时间是以恒定速率递增的，不受系统时间的影响（系统时间可被人为或软件调整）。
+它表示高分辨率时间，用亚毫米值记录时间，对于获取低于1毫秒的定时数据非常有用。
 
-注意 `Date.now()`输出的是 UNIX 时间，即距离 1970 的时间，而`performance.now()`**输出的是相对于`performance.timing.navigationStart(页面初始化) `的时间**。
+`performance.now()`与`Date.now()`不同的是，返回了以毫秒为单位，精度为微秒级别（百万分之一秒）。
+
+并且与`Date.now()`会受系统程序执行阻塞的影响不同，`performance.now()`的时间是以恒定速率递增的，**不受系统时间的影响**（系统时间可被人为或软件调整）。
+
+注意 `Date.now()`输出的是 UNIX 时间，即距离 1970 的时间，而`performance.now()`**输出的是相对于`performance.timing.navigationStart(页面初始化)`的时间**。
 
 使用`Date.now()`的差值并非绝对精确，因为计算时间时受系统限制（可能阻塞）。但使用`performance.now()` 的差值，并不影响我们计算程序执行的精确时间。
 
 ## performance.mark()/performance.measure()——计算程序运行时间
+
 先上代码，跟着注释看：
+
 ```js
 function randomFunc(n) {
     if (!n) {
@@ -167,8 +193,22 @@ let measure = window.performance.getEntriesByType('measure');
 ```
 
 剩余还有一些方法，按方法名就能理解
+
 + `performance.getEntriesByName(name)`：获取`name`为`name`的`performance`对象,返回一个数组集合
 + `performance.clearMarks([name])`：接收一个`name`(可选)，清除指定`name`的标记(未传入参数时清空所有)
 + `performance.clearMeasure([name])`: 同上同理
 
 [参考](http://www.alloyteam.com/2015/09/explore-performance/)
+
+## performance.memory——浏览器堆栈对象
+
+**Note**：该对象主要只支持`Chrome`浏览器，其他主流浏览器不支持
+
+该对象主要有三个属性，如图：
+![memory](./img/memory.png)
+
+其中它们分别的含义为：
+
++ `usedJSHeapSize`：堆中当前所有正在使用的对象所占内存的总量
++ `totalJSHeapSize`：未被对象使用的空闲空间在内的堆的总大小
++ `jsHeapSizeLimit`：堆的最大容量

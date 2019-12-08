@@ -85,19 +85,19 @@ _而且作用域链中每个对象的属性在全局对象中都有相同名字�
 在事件处理程序中`event`变量，保存着`event`对象（事件对象）
 它具有以下常用属性：（只可读）
 
--   bubbles：表明事件是否冒泡
--   cancelable：表明是否可以取消事件默认行为
--   **currentTarget**：安装事件处理器的元素(同`this`)
--   defaultPrevented：是否调用`preventDefault()`函数
--   eventPhase：调用事件处理程序时的阶段：
-    -   1 表示捕获阶段
-    -   2 表示处于目标
-    -   3 表示冒泡阶段
-    -   (当 eventPhase 等于 2（处于目标阶段时），`this`、`target`、`currentTarget`始终都相等)
--   target：触发事件处理程序作的目标
--   isTrusted：`true`表示用户行为触发的事件，`false`表示浏览器自动触发
--   type：事件类型
--   view：事件关联的抽象视图，就是`window`对象
+- bubbles：表明事件是否冒泡
+- cancelable：表明是否可以取消事件默认行为
+- **currentTarget**：安装事件处理器的元素(同`this`)
+- defaultPrevented：是否调用`preventDefault()`函数
+- eventPhase：调用事件处理程序时的阶段：
+  - 1 表示捕获阶段
+  - 2 表示处于目标
+  - 3 表示冒泡阶段
+  - (当 eventPhase 等于 2（处于目标阶段时），`this`、`target`、`currentTarget`始终都相等)
+- target：触发事件处理程序作的目标
+- isTrusted：`true`表示用户行为触发的事件，`false`表示浏览器自动触发
+- type：事件类型
+- view：事件关联的抽象视图，就是`window`对象
 
 在事件处理程序内部 `this`始终等于`currentTarget`
 
@@ -157,13 +157,13 @@ btn.onclick = function() {
 
 ### UI 事件
 
--   load：当页面完全加载后在`window`上触发，当所有框架加载完毕时在框架集上触发
--   unload：当页面完全卸载后在`window`上触发，当所有框架卸载完毕时触发，或镶入的内容卸载完毕后在`<object>`元素上触发
--   abort：当用户停止下载过程时，如果镶入的内容没有加载完，则在`<object>`元素上触发
--   error:当 js 错误时，在`window`上触发
--   select：当用户选择文本框中的一个或多个时触发
--   resize：当窗口或框架大小发生变化时在`window`或框架上触发
--   scroll：当用户滚动带滚动条的元素时在元素上触发
+- load：当页面完全加载后在`window`上触发，当所有框架加载完毕时在框架集上触发
+- unload：当页面完全卸载后在`window`上触发，当所有框架卸载完毕时触发，或镶入的内容卸载完毕后在`<object>`元素上触发
+- abort：当用户停止下载过程时，如果镶入的内容没有加载完，则在`<object>`元素上触发
+- error:当 js 错误时，在`window`上触发
+- select：当用户选择文本框中的一个或多个时触发
+- resize：当窗口或框架大小发生变化时在`window`或框架上触发
+- scroll：当用户滚动带滚动条的元素时在元素上触发
 
 #### load 事件
 
@@ -188,25 +188,25 @@ _IE8 及其之前不支持在`script`元素上的`load`事件_。
 
 ### 焦点事件
 
--   focusin：在元素获得焦点时触发。 这个事件会**冒泡**。
--   focus：在元素获得焦点时触发。 这个事件不会冒泡。
--   focusout：在元素失去焦点时触发。 这个事件会**冒泡**。
--   blur：元素失去焦点时触发。 这个事件不会冒泡；
+- focusin：在元素获得焦点时触发。 这个事件会**冒泡**。
+- focus：在元素获得焦点时触发。 这个事件不会冒泡。
+- focusout：在元素失去焦点时触发。 这个事件会**冒泡**。
+- blur：元素失去焦点时触发。 这个事件不会冒泡；
 
 ### 鼠标事件
 
--   click：通过鼠标或回车触发。
+- click：通过鼠标或回车触发。
     这个事件会冒泡。
 
--   dbclick：双击鼠标触发。
+- dbclick：双击鼠标触发。
     这个事件会冒泡。
 
 ---
 
--   mouseenter：鼠标从元素外部首次移至内部时触发，首次是移到子元素上时也会触发绑定事件的父元素。
+- mouseenter：鼠标从元素外部首次移至内部时触发，首次是移到子元素上时也会触发绑定事件的父元素。
     这个事件**不冒泡**。
 
--   mouseleave：鼠标从元素内部首次移到外部时触发，移到子元素上不触发。
+- mouseleave：鼠标从元素内部首次移到外部时触发，移到子元素上不触发。
     这个事件**不冒泡**。
 
 ```html
@@ -230,7 +230,7 @@ _IE8 及其之前不支持在`script`元素上的`load`事件_。
 
 ---
 
--   mouseover：鼠标从一个元素外部首次进入另一个元素边界之内时触发。（移到子元素上也会触发）
+- mouseover：鼠标从一个元素外部首次进入另一个元素边界之内时触发。（移到子元素上也会触发）
     这个事件会冒泡。
 
 mouseout：鼠标从一个元素移到另一个元素时触发。（移到子元素上也会触发）
@@ -266,24 +266,24 @@ mouseup：释放鼠标按钮时触发。
 `offsetX`:鼠标事件发生时，鼠标相对于目标元素的水平位置。（以目标元素 border 里层为起点）
 `offsetY`:鼠标事件发生时，鼠标相对于目标元素的垂直位置。
 
--   修改键：
+- 修改键：
     `shiftKey`、`ctrlKey`、`altKey`、`metaKey`，这些属性中都为`boolean`值，当触发鼠标事件时相应键被按下时，变为`true`，否则为`false`。
 
--   相关元素:
+- 相关元素:
     `relatedTarget`属性提供了相关元素的信息，这个属性是`mouseover`与`mouseout`事件的专属值,分别表示鼠标**来自的元素**和**鼠标去往的元素**（IE8 之前不支持，IE 中，`mouseover`的相关元素属性保存在`fromElement`中，在`mouseout`的相关元素属性保存在`toElement`属性中）
 
--   鼠标按钮：
+- 鼠标按钮：
     在`mousedown`与`mouseup`事件中，其`event`对象中存在一个`button`属性，记录着是哪一个鼠标按钮触发的事件，0 表示左键，1 表示鼠标中键，2 表示鼠标右键。
     在 IE8 及其以下版本中，`button`属性的值与`dom`不同（具体百度）
 
--   `detail`属性：
+- `detail`属性：
     在鼠标事件中，这个属性表示发生了多少次单击。（在同一元素上相继发生一次`mousedown`与`mouseup`算一次单击，从`0`开始计数，如果鼠标在`mousedown`和`mouseup`间移动了位置或在短时间内未点击，则`detail`会被重置为`1`）
     在 firefox 浏览器中有 bug，超过`3`时会循环`2`与`3`
 
 > IE 中鼠标事件还有以下属性：（DOM 中有，IE 名不同）
 > `altLeft`、`ctrlLeft`、`shiftLeft`是否按下`alt`与`ctrl`，按下为`true`。
 
--   鼠标滚轮事件：
+- 鼠标滚轮事件：
     `mousewheel`事件，当滚动鼠标滚轮时发生，其`event`对象包含所有鼠标事件属性外还包含一个`wheelDelta`属性，当向上滚时，`wheelDelta`是 120 的倍数，下时是-120 的倍数。（该事件会冒泡）
 
 > firefox 中该事件名为`DOMMouseScroll`，向上滚为-3 的倍数，向下为 3 的倍数，这个属性保存在`detail`中（这个`detail`在该事件中与点击次数无关）。
@@ -294,17 +294,17 @@ mouseup：释放鼠标按钮时触发。
 
 ### 键盘事件
 
--   `textInput`事件：在可编辑区域且用户按下实际能够输入字符的键时触发，也可以通过复制粘贴剪切和粘贴、拖放等方式触发。拥有一个`data`属性表示按下的是键的字符。（区分大小写）（firefox 不支持）
+- `textInput`事件：在可编辑区域且用户按下实际能够输入字符的键时触发，也可以通过复制粘贴剪切和粘贴、拖放等方式触发。拥有一个`data`属性表示按下的是键的字符。（区分大小写）（firefox 不支持）
 
     > 在该事件中 IE 的事件名称为`textinput`且支持一个`inputMethod()`方法表示通过什么方式输出的字符。
 
--   `input`事件：文本插入元素后触发事件。（IE 中为`propertychange`）
+- `input`事件：文本插入元素后触发事件。（IE 中为`propertychange`）
 
--   `keydown`：当用户按下键盘任意键时触发。
+- `keydown`：当用户按下键盘任意键时触发。
 
--   `keypress`：当用户按下键盘上的字符键并生成字符时触发，`esc`也会触发该事件。
+- `keypress`：当用户按下键盘上的字符键并生成字符时触发，`esc`也会触发该事件。
 
--   `keyup`：当用户释放键盘上的键时触发。
+- `keyup`：当用户释放键盘上的键时触发。
 
 _当按下一个字符时，首先触发`keydown`，然后触发`keypress`，最后释放时触发`keyup`_
 
@@ -343,9 +343,9 @@ I8 及其以上：`getModifierState(字符串)`接受一个字符串`Shift`、`C
 
 当我们通过输入法在可编辑文本框中输入拼音时, 会触发复合事件(也会触发`input`事件), 复合事件有 3 个：
 
--   `compositionstart`：事件触发于一段文字的输入之前（类似于 `keydown`事件，但是该事件仅在若干可见字符的输入之前，而这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词）。
--   `compositionupdate`: 事件触发于字符被输入到一段文字的时候（这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词）
--   `compositionend`：当文本段落的组成完成或取消时, `compositionend` 事件将被触发 (具有特殊字符的触发, 需要一系列键和其他输入, 如语音识别或移动中的字词建议)。
+- `compositionstart`：事件触发于一段文字的输入之前（类似于 `keydown`事件，但是该事件仅在若干可见字符的输入之前，而这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词）。
+- `compositionupdate`: 事件触发于字符被输入到一段文字的时候（这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词）
+- `compositionend`：当文本段落的组成完成或取消时, `compositionend` 事件将被触发 (具有特殊字符的触发, 需要一系列键和其他输入, 如语音识别或移动中的字词建议)。
 
 当一开始输入时，相对于 input 事件, 它们的触发顺序为：
 `compositionstart` -> `compositionupdate` -> `input` -> `compositionend`
@@ -404,27 +404,27 @@ I8 及其以上：`getModifierState(字符串)`接受一个字符串`Shift`、`C
 
 在拖放事件中，有一个`dataTransfer`对象用于实现在拖放操作中的数据交换，它拥有以下属性。（保存在该对象中的数据只能在`drop`事件中获取）
 
--   dropEffect:获取/设置实际的放置效果，它应该始终设置成`effectAllowed`的可能值之一 用于知道被拖动的元素能够执行哪种放置行为。（这个属性只能在`ondragenter`事件中针对放置目标来设置，并且该值的表现形式为鼠标在放置目标上的样式）共有以下四个值：
-    -   none：不能把拖动元素放这里。（默认值）
-    -   move：应该把拖动的元素移动到放置目标
-    -   copy：应该把拖动的元素复制到放置目标
-    -   link：表示放置目标会打开拖动的元素（拖动元素必须是一个链接，有 URL）。
+- dropEffect:获取/设置实际的放置效果，它应该始终设置成`effectAllowed`的可能值之一 用于知道被拖动的元素能够执行哪种放置行为。（这个属性只能在`ondragenter`事件中针对放置目标来设置，并且该值的表现形式为鼠标在放置目标上的样式）共有以下四个值：
+  - none：不能把拖动元素放这里。（默认值）
+  - move：应该把拖动的元素移动到放置目标
+  - copy：应该把拖动的元素复制到放置目标
+  - link：表示放置目标会打开拖动的元素（拖动元素必须是一个链接，有 URL）。
         。
--   effectAllowed:用来指定拖动时被允许的效果,允许拖动元素的哪种`dropEffect`。（只能在`drapstart`事件中设置该属性）可能的值为：
+- effectAllowed:用来指定拖动时被允许的效果,允许拖动元素的哪种`dropEffect`。（只能在`drapstart`事件中设置该属性）可能的值为：
 
-    -   uninitialized：没有给被拖动的元素设置任何放置行为。
-    -   none：被拖动的元素不能有任何行为。
-    -   copy：只允许值为`copy`的`dropEffect`。
-    -   link：只允许值为`link`的`dropEffect`。
-    -   move：只允许值为`move`的`dropEffect`。
-    -   copyLink：允许值为`copy`和`link`的`dropEffect`
-    -   copyMove: 允许值为`copy`和`move`的`dropEffect`
-    -   linkMove: 允许值为`link`和`move`的`dropEffect`
-    -   all：允许任意`dropEffect`
+  - uninitialized：没有给被拖动的元素设置任何放置行为。
+  - none：被拖动的元素不能有任何行为。
+  - copy：只允许值为`copy`的`dropEffect`。
+  - link：只允许值为`link`的`dropEffect`。
+  - mve：只允许值为`move`的`dropEffect`。
+  - copyLink：允许值为`copy`和`link`的`dropEffect`
+  - copyMove: 允许值为`copy`和`move`的`dropEffect`
+  - linkMove: 允许值为`link`和`move`的`dropEffect`
+  - all：允许任意`dropEffect`
 
--   files:包含一个在数据传输上所有可用的本地文件列表。如果拖动操作不涉及拖动文件，此属性是一个空列表。此属性访问指定的`FileList`中无效的索引将返回未定义（`undefined`）。
--   types:保存一个被存储数据的类型列表作为第一项，顺序与被添加数据的顺序一致。如果没有添加数据将返回一个空列表。
--   items:表示一个放置操作中添加的数据的数据列表,只读,没有时为空
+- files:包含一个在数据传输上所有可用的本地文件列表。如果拖动操作不涉及拖动文件，此属性是一个空列表。此属性访问指定的`FileList`中无效的索引将返回未定义（`undefined`）。
+- types:保存一个被存储数据的类型列表作为第一项，顺序与被添加数据的顺序一致。如果没有添加数据将返回一个空列表。
+- items:表示一个放置操作中添加的数据的数据列表,只读,没有时为空
 
 这个对象有两个主要的方法：
 `setData(type,value)`该方法的第一个参数为一个字符串，表示要保存的数据类型，可取值为`text`或`URL`，第二个参数为要存放的值。（可以用`items.add()`代替）
@@ -439,22 +439,6 @@ I8 及其以上：`getModifierState(字符串)`接受一个字符串`Shift`、`C
 共有三个参数，第一个表示要显示的 HTML 元素，后两个表示光标在图像中的 x、y 坐标。
 HTML 元素可以为一幅图像，也可以为其他的元素。
 
-### 模拟事件
+### DOM模拟事件
 
-在 document 上可以用`createEvent(string)`创建一个 event 对象，接受一个参数，表示创建事件的类型的字符串（`UIEvents`、`MouseEvents`、`MutationEvents`、`HTMLEvents`）
-
-利用`init[上述字符串不加s] (参数)`来初始化事件信息（如`initMouseEvent`）
-
-利用`dispatchEvent(事件对象)`来触发事件，即添加事件到指定元素。
-
-创建模拟事件的步骤
-
-1. 创建 event 对象
-2. 初始化 event 对象信息
-3. 触发事件
-
-自定义 DOM 事件
-`createEvent("CustomEvent")`创建一个用户对象，在用`initCustomEvent(type，bubbles，cancelable，detail)`初始化 event 对象（只有 IE9+与 firefox 支持）
-
-IE 中的事件模拟
-`document.createEventObject()`创建对象，返回一个 event 对象。然后手动为这个对象添加各种信息，然后在用`fireEvent(事件名称，事件event对象)`调用事件
+[模拟事件前往](./模拟事件/README.md)
