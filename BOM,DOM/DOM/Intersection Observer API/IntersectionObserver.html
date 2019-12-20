@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #app {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+
+        .other {
+            width: 100px;
+            height: 100px;
+            background-color: gray;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="info">不可见，以任意速度向下滚动</div>
+    <div id="target"></div>
+
+    <style>
+        #info {
+            position: fixed;
+        }
+
+        #target {
+            position: absolute;
+            top: 200%;
+            width: 100px;
+            height: 100px;
+            background: red;
+        }
+    </style>
+
+    <script>
+        let observer = new IntersectionObserver(([entry]) => {
+            console.log(entry.intersectionRatio)
+            if (entry.intersectionRatio > 0) {
+                info.textContent = "可见了"
+            } else {
+                info.textContent = "不可见，以任意速度向下滚动"
+            }
+        }, {
+            threshold: 0
+        })
+
+        observer.observe(target)
+    </script>
+
+</body>
+
+</html>

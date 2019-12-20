@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="969px" height="413px" viewBox="0 0 969 413" enable-background="new 0 0 969 413" xml:space="preserve">
+<g>
+	<path fill="#FFFFFF" d="M0,289h969v123H0V289z"/>
+	<path fill="#F3F3F3" d="M0,326h969v80H0V326z"/>
+	<path fill="#FFFFFF" d="M0,42h969v217H0V42z"/>
+	<path fill="#F3F3F3" d="M0,84h969v64H0V84z M0,152h969v31H0V152z M0,189h969v64H0V189z"/>
+	<text transform="matrix(1 0 0 1 10 68)" font-family="'Helvetica'" font-size="13">Renderer Process</text>
+	<text transform="matrix(1 0 0 1 10 103)" font-family="'Helvetica-Bold'" font-size="10">Compositor Thread</text>
+	<text transform="matrix(1 0 0 1 10 172)" font-family="'Helvetica-Bold'" font-size="10">Compositor Tile Worker(s)</text>
+	<text transform="matrix(1 0 0 1 10 210)" font-family="'Helvetica-Bold'" font-size="10">Main Thread</text>
+	<text transform="matrix(1 0 0 1 10 347)" font-family="'Helvetica-Bold'" font-size="10">GPU Thread</text>
+	<text transform="matrix(1 0 0 1 10 312)" font-family="'Helvetica'" font-size="13">GPU Process</text>
+	<path fill="#A3C37D" stroke="#84A859" d="M125,93h48v44h-48V93z"/>
+	<path fill="#F8E799" stroke="#EAD46F" d="M148,198h69v44h-69V198z"/>
+	<path fill="#282828" stroke="#282828" d="M215.5,118.5v73.11V118.5z M215.5,191.61l3-10.8h-6L215.5,191.61z M770.5,210.5v-71V210.5
+		z M770.5,139.5l-3,10.8h6L770.5,139.5z M933.5,123.5v211.334V123.5z M933.5,334.834l3-10.8h-6L933.5,334.834z"/>
+	<text transform="matrix(1 0 0 1 158.2588 216)" font-family="'Helvetica'" font-size="10">Input event</text>
+	<text transform="matrix(1 0 0 1 163.8198 229)" font-family="'Helvetica'" font-size="10">handlers</text>
+	<path fill="#F8E799" stroke="#EAD46F" d="M219,198h69v44h-69V198z"/>
+	<text transform="matrix(1 0 0 1 224.2661 216)" font-family="'Helvetica'" font-size="10">requestAnim-</text>
+	<text transform="matrix(1 0 0 1 228.7119 229)" font-family="'Helvetica'" font-size="10">ationFrame</text>
+	<path fill="#8EC7F4" stroke="#69B1F5" d="M290,198h69v44h-69V198z"/>
+	<text transform="matrix(1 0 0 1 311.938 216)" font-family="'Helvetica'" font-size="10">Parse</text>
+	<text transform="matrix(1 0 0 1 311.3892 229)" font-family="'Helvetica'" font-size="10">HTML</text>
+	<path fill="#B1A7D6" stroke="#9589C6" d="M361,198h69v44h-69V198z"/>
+	<text transform="matrix(1 0 0 1 380.2168 216)" font-family="'Helvetica'" font-size="10">Recalc</text>
+	<text transform="matrix(1 0 0 1 381.8838 229)" font-family="'Helvetica'" font-size="10">Styles</text>
+	<path fill="#B1A7D6" stroke="#9589C6" d="M432,198h69v44h-69V198z"/>
+	<text transform="matrix(1 0 0 1 451.4878 223)" font-family="'Helvetica'" font-size="10">Layout</text>
+	<path fill="#B1A7D6" stroke="#9589C6" d="M503,198h69v44h-69V198z"/>
+	<text transform="matrix(1 0 0 1 521.377 216)" font-family="'Helvetica'" font-size="10">Update</text>
+	<text transform="matrix(1 0 0 1 513.5938 229)" font-family="'Helvetica'" font-size="10">Layer Tree</text>
+	<path fill="#A3C37D" stroke="#84A859" d="M574,198h53.001v44H574V198z"/>
+	<text transform="matrix(1 0 0 1 588 223)" font-family="'Helvetica'" font-size="10">Paint</text>
+	<text transform="matrix(1 0 0 1 135.0542 112)" font-family="'Helvetica'" font-size="10">Frame</text>
+	<text transform="matrix(1 0 0 1 138.9409 125)" font-family="'Helvetica'" font-size="10">Start</text>
+	<path fill="#A3C37D" stroke="#84A859" d="M693.001,198H749v44h-55.999V198z"/>
+	<text transform="matrix(1 0 0 1 696.6016 223)" font-family="'Helvetica'" font-size="10">Composite</text>
+	<path fill="#A3C37D" stroke="#84A859" d="M734,92h69v44h-69V92z"/>
+	<text transform="matrix(1 0 0 1 751.7734 112)" font-family="'Helvetica'" font-size="10">Raster</text>
+	<text transform="matrix(1 0 0 1 744.8701 125)" font-family="'Helvetica'" font-size="10">Scheduled</text>
+	<path fill="#A3C37D" stroke="#84A859" d="M793,157h74v22h-74V157z"/>
+	<text transform="matrix(1 0 0 1 807.8818 171)" font-family="'Helvetica'" font-size="10">Rasterize</text>
+	<path fill="#A3C37D" stroke="#84A859" d="M835,92h48v44h-48V92z"/>
+	<text transform="matrix(1 0 0 1 846.0547 111)" font-family="'Helvetica'" font-size="10">Frame</text>
+	<text transform="matrix(1 0 0 1 849.6035 124)" font-family="'Helvetica'" font-size="10">End</text>
+	<path fill="#F8E799" stroke="#EAD46F" d="M792,198h111v44H792V198z"/>
+	<text transform="matrix(1 0 0 1 803.0859 221)" font-family="'Helvetica'" font-size="10">requestIdleCallback</text>
+	<path fill="#8EC7F4" stroke="#69B1F5" d="M839,343h125v44H839V343z"/>
+	<text transform="matrix(1 0 0 1 851.6875 361)" font-family="'Helvetica'" font-size="10">Layer tiles uploaded to</text>
+	<text transform="matrix(1 0 0 1 856.0859 374)" font-family="'Helvetica'" font-size="10">GPU and composited.</text>
+	<text transform="matrix(1 0 0 1 108.2222 7)" font-family="'Helvetica'" font-size="9">vsync and input data</text>
+	<text transform="matrix(1 0 0 1 756 221)" font-family="'Helvetica'" font-size="9">commit</text>
+	<text transform="matrix(1 0 0 1 918 119)" font-family="'Helvetica'" font-size="9">commit</text>
+	<path fill="#282828" stroke="#282828" d="M175.5,16.5v73.11V16.5z M175.5,89.61l3-10.8h-6L175.5,89.61z M859.5,144v11.5V144H857
+		l2.5-6l2.5,6H859.5z M797.5,149v-11.5V149h2.5l-2.5,6l-2.5-6H797.5z"/>
+	<path fill="#D0021B" stroke="#D0011B" stroke-linecap="square" d="M254.5,278.5v-32.016 M254.5,246.484l-3,10.8h6L254.5,246.484z"
+		/>
+	<path fill="none" stroke="#D0011B" stroke-linecap="square" d="M467.5,248.5v30 M395.5,248.5v30 M467.502,278.5h-212.34"/>
+	<path fill="#D46FA8" stroke="#EC06F9" d="M629.001,198H691v44h-61.999V198z"/>
+	<text transform="matrix(1 0 0 1 634.0068 216.5)" enable-background="new    "><tspan x="0" y="0" fill="#080419" font-family="'Helvetica'" font-size="10">Intersection</tspan><tspan x="-3.61" y="12" fill="#080419" font-family="'Helvetica'" font-size="10">Observations</tspan></text>
+</g>
+</svg>
