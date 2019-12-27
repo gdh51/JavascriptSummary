@@ -2,19 +2,21 @@
 
 ## 同源策略
 
-同源策略/SOP（Same origin policy）是一种约定，由Netscape公司1995年引入浏览器，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，浏览器很容易受到`XSS`、`CSFR`等攻击。所谓同源是指"协议+域名+端口"三者相同，即便两个不同的域名指向同一个ip地址，也非同源。
+同源策略/`SOP`(`Same-origin policy`)是一种约定，由`Netscape`公司`1995`年引入浏览器，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，浏览器很容易受到`XSS`、`CSFR`等攻击。所谓同源是指`协议+域名+端口`三者相同，即便两个不同的域名指向同一个`ip`地址，也非同源。
 
-一个URL如：`https://www.lazy.com:8080` 其中协议为`https`,域名为`www.lazy.`,端口为8080
+一个URL如：`https://www.lazy.com:8080` 其中协议为`https`,域名为`www.lazy.`，端口为`8080`
 
 ### 同源策略限制
 
-1. Cookie、LocalStorage 和 IndexDB 无法读取
-2. DOM 和 Js对象无法获得
-3. 无法用js发送非同源的AJAX请求 。更准确的说，js可以向非同源的服务器发请求，但是服务器返回的数据会被浏览器拦截。
+1. `Cookie`、`LocalStorage` 和 `IndexDB` 无法读取
+2. `DOM` 和 `js` 对象无法获得
+3. 无法用`js`发送非同源的`ajax`请求 。更准确的说，`js`可以向非同源的服务器发请求，但是服务器返回的数据会被浏览器拦截。
 
-## 解决方法
+## 必须跨域时的 解决方法
 
 ### 跨文档消息传递（XDM）异步
+
+跨文档信息传递通过`postMessage()`这个`API`来实现。
 
 `window.postMessage(data,origin)`：接受两个参数：第一个表示发送的消息，第二个参数为指明目标窗口的URL————**协议+主机+端口号**，当某一项不匹配时都会被忽略; 当第二个参数为`*`时可以把消息发送给任何域。第一个参数最好只传入字符串，为了浏览器兼容性，也可以传递一个对象，会把该对象深度复制。当使用`*`时表示可以传给任意窗口，`/`时表示与当前窗口同源
 
@@ -35,19 +37,19 @@ fw === iframe1;//true
 
 #### message事件
 
-在该事件（`message`事件）中我们只需要关注3个信息：
+在该事件（`message`事件）中我们只需要关注它的3个属性：
 
-+ data：作为`postMessage()`方法传入的第一个参数的字符串数据。如果数据是个对象，则会对传入的数据进行深度复制
++ `data`：作为`postMessage()`方法传入的第一个参数的字符串数据。如果数据是个对象，则会对传入的数据进行深度复制
 
-+ origin：发送信息的文档所在的域。通常应先检查该属性来忽略未知源的信息。
++ `origin`：发送信息的文档所在的域。通常应先检查该属性来忽略未知源的信息。
 
-+ source：发送信息的文档的`window`对象的代理。这个代理对象主要用于在发送上一条信息的窗口中调用`postMessage`方法。如果发送信息的窗口来自同一个域，则这个对象就是`window`。（这个属性大多数情况下只是`window`对象的代理，并非实际的`window`对象，不能通过它访问`window`对象的其他信息，所以只通过它调用`postMessage()`方法就可以了）
++ `source`：发送信息的文档的`window`对象的代理。这个代理对象主要用于在发送上一条信息的窗口中调用`postMessage`方法。如果发送信息的窗口来自同一个域，则这个对象就是`window`。（这个属性大多数情况下只是`window`对象的代理，并非实际的`window`对象，不能通过它访问`window`对象的其他信息，所以只通过它调用`postMessage()`方法就可以了）
 
 ## 通过jsonp跨域
 
-通过动态创建`script`标签并指定其`src`属性为要访问的URL进行跨域
+通过动态创建`script`标签并指定其`src`属性为要访问的`URL`进行跨域
 
-当我们要请求一个跨域资源时只需要下面这样在URL后添加要调用的回调函数名
+当我们要请求一个跨域资源时只需要下面这样在`URL`后添加要调用的回调函数名
 
 ```js
 let script = document.createElement('script');
@@ -61,7 +63,7 @@ function somefn(arg){
 }
 ```
 
-服务器在收到请求后，会解析URL,并更具callback的值向请求方发送带有数据的函数如：
+服务器在收到请求后，会解析`URL`,并根据`callback()`的值向请求方发送带有数据的函数如：
 
 ```js
 somefn({status: 'ok'});
@@ -69,7 +71,7 @@ somefn({status: 'ok'});
 
 该函数会在返回时立即执行。
 
-缺点是该请求只能为GET请求
+缺点是该请求只能为`GET`请求
 
 ## 通过设置document.domain相同 使iframe跨域
 
@@ -97,9 +99,9 @@ somefn({status: 'ok'});
 
 实现原理： a欲与b跨域相互通信，通过中间页c来实现。 三个页面，不同域之间利用`iframe`的`location.hash`传值，相同域之间直接js访问来通信。
 
-具体实现：A域：a.html -> B域：b.html -> A域：c.html，a与b不同域只能通过`hash`值单向通信，b与c也不同域也只能单向通信，但c与a同域，所以c可通过`parent.parent`访问a页面所有对象。
+具体实现：`A域：a.html` -> `B域：b.html` -> `A域：c.html`，`a`与`b`不同域只能通过`hash`值单向通信，`b`与`c`也不同域也只能单向通信，但`c`与`a`同域，所以`c`可通过`parent.parent`访问`a`页面所有对象。
 
-1. a.html为`http://www.domain1.com/a.html`
+1. `a.html`为`http://www.domain1.com/a.html`
 
    ```html
    <iframe id="iframe" src="http://www.domain2.com/b.html" style="display:none;"></iframe>
@@ -118,7 +120,7 @@ somefn({status: 'ok'});
    </script>
    ```
 
-2. b.html为`http://www.domain2.com/b.html`  与a跨域
+2. `b.html`为`http://www.domain2.com/b.html`  与a跨域
 
    ```html
    <iframe id="iframe" src="http://www.domain1.com/c.html" style="display:none;"></iframe>
@@ -132,7 +134,7 @@ somefn({status: 'ok'});
    </script>
    ```
 
-3. c.html为`http://www.domain1.com/c.html`
+3. `c.html`为`http://www.domain1.com/c.html`
 
    ```html
    <script>
@@ -144,7 +146,7 @@ somefn({status: 'ok'});
    </script>
    ```
 
-##  设置window.name来使iframe跨域
+## 设置window.name来使iframe跨域
 
 `window.name`属性的独特之处：`name`值在不同的页面（甚至不同域名）加载后依旧存在，并且可以支持非常长的`name`值（2MB）。
 
@@ -154,7 +156,7 @@ somefn({status: 'ok'});
 var proxy = function(url, callback) {
     var state = 0;
     var iframe = document.createElement('iframe');
-
+ 
     // 加载跨域页面
     iframe.src = url;
 
@@ -192,9 +194,9 @@ proxy('http://www.domain2.com/b.html', function(data){
 
 普通跨域请求：只服务端设置`Access-Control-Allow-Origin`即可，前端无须设置，若要带`cookie`请求：前后端都需要设置。
 
-需注意的是：由于同源策略的限制，所读取的`cookie`为*跨域请求接口所在域*的`cookie`，而非当前页。如果想实现当前页`cookie`的写入需要nginx反向代理中设置`proxy_cookie_domain` 或NodeJs中间件代理中`cookieDomainRewrite`参数的设置
+需注意的是：由于同源策略的限制，所读取的`cookie`为*跨域请求接口所在域*的`cookie`，而非当前页。如果想实现当前页`cookie`的写入需要`nginx`反向代理中设置`proxy_cookie_domain` 或`NodeJs`中间件代理中`cookieDomainRewrite`参数的设置
 
-目前，所有浏览器都支持该功能(IE8+：IE8/9需要使用`XDomainRequest`对象来支持CORS)，CORS也已经成为主流的跨域解决方案。
+目前，所有浏览器都支持该功能(`IE8+：IE8/9`需要使用`XDomainRequest`对象来支持`CORS`)，`CORS`也已经成为主流的跨域解决方案。
 
 前端设置：
 
@@ -210,7 +212,7 @@ xhr.withCredentials = true;
 ```js
 //只介绍nodejs
 //设置响应头
- res.writeHead(200, {
+res.writeHead(200, {
    'Access-Control-Allow-Credentials': 'true',     // 后端允许发送Cookie
    'Access-Control-Allow-Origin': 'http://www.domain1.com',    // 允许访问的域（协议+域名+端口）
     /*

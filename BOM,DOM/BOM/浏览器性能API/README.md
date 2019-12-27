@@ -31,10 +31,10 @@ ____
 + `unloadEventEnd`：前一个页面`unload`事件结束的时间。
 + `redirectStart、redirectEnd`：到当前页面的重定向开始或结束的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值，**这两个值的差值即HTTP重定向所消耗的时间**
 + `fetchStart`：浏览器第一次检查用于存储请求资源的缓存时的开始时间，要计算缓存加载的全部时间，即`domainLookupStart - fetchStart`
-+ `domainLookupStart、domainLookupEnd`：开始查询当前页面DNS的时间或查询当前页面DNS结束的时间，**这两个值的差值即DNS查询的完整时间**
-+ `connectStart、connectEnd`：浏览器尝试与服务器建立TCP连接的时间、服务器与服务器完成TCP连接的时间，**这两个值的差值即建立TCP连接的完整时间**。
-+ `secureConnectionStart`：浏览器尝试以SSL方式连接服务器的开始时间，**该值与`connectEnd`的差值即建立SSL隧道的完整时间**。
-+ `requestStart、responseStart`：浏览器发送HTTP请求的时间快照或浏览器第一次对服务器的响应进行注册时的时间快照。
++ `domainLookupStart、domainLookupEnd`：开始查询当前页面`DNS`的时间或查询当前页面`DNS`结束的时间，**这两个值的差值即DNS查询的完整时间**
++ `connectStart、connectEnd`：浏览器尝试与服务器建立`TCP`连接的时间、服务器与服务器完成`TCP`连接的时间，**这两个值的差值即建立TCP连接的完整时间**。
++ `secureConnectionStart`：浏览器尝试以`SSL`方式连接服务器的开始时间，**该值与`connectEnd`的差值即建立SSL隧道的完整时间**。
++ `requestStart、responseStart`：浏览器发送`HTTP`请求的时间快照或浏览器第一次对服务器的响应进行注册时的时间快照。
 + `responseEnd`：浏览器完成接收服务器发出的响应的时间快照，**`responseEnd - connectStart`即完成一次HTTP往返所花费的总时间(包括建立HTTP请求的时间)**。
 + `domLoading`：`document.readyState`变为`loading`的时间，文档开始加载的时间
 + `domComplete`：文档加载完成的时间快照，**`domComplete - domLoading`即页面渲染所花费的时间**，**`domComplete - navigationStart`即加载页面所花费的时间(第一次请求到页面完全加载完成)**。
@@ -95,14 +95,14 @@ ____
 
 具体有以下时间段：
 
-+ DNS查询耗时：`domainLookupEnd - domainLookupStart`
-+ TCP连接耗时：`connectEnd - connectStart`
-+ request请求耗时(直到响应)：`responseEnd - requestStart`
-+ 解析DOM树耗时：`domComplete - responceEnd`
-+ 白屏时间(从加载到开始插入dom)：`domloadng - navigationStart`
++ `DNS`查询耗时：`domainLookupEnd - domainLookupStart`
++ `TCP`连接耗时：`connectEnd - connectStart`
++ `request`请求耗时(直到响应)：`responseEnd - requestStart`
++ 解析`DOM`树耗时：`domComplete - responceEnd`
++ 白屏时间(从加载到开始插入`dom`)：`domloadng - navigationStart`
 + 首屏时间：`loadEventEnd - navigationStart`
-+ DOMContentLoad事件触发：`domContentLoadedEventEnd - domContentLoadedEventStart`
-+ load事件触发事件：`loadEventEnd - loadEventStart`
++ `DOMContentLoad`事件触发：`domContentLoadedEventEnd - domContentLoadedEventStart`
++ `load`事件触发事件：`loadEventEnd - loadEventStart`
 
 通过`performance.getEntriesByType('resource')`可以获取资源加载的时间的对象(以数组形式返回)
 ![资源加载时间戳](./img/resource.svg)
