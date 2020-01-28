@@ -138,3 +138,66 @@ function Singleton () {
 ```
 
 `Singleton`模式很有使用价值，但通常当我们要使用它时，就说明我们可能需要重新评估我们的设计了，这个模式的存在往往表明系统中的模块要么是系统紧密耦合，要么是其逻辑过于分散在代码库的多个部分。
+
+## Observer(观察者)模式
+
+该模式是一种设计模式，具体为：一个对象(称为`subject`/被观察的主题)维持一系列依赖于它(观察者Observer)的对象，并将有关状态的任何变动信息自动通知给它们。
+
+当一个目标需要告诉观察者发生了什么有趣的事情，它会向观察者广播一个通知(并包含与该主题有关的某些数据)；当我们不再希望某个观察者获取其观察的目标发出的改变通知时，该主题对象可以将它从观察者列表中删除。
+
+按上述逻辑我们可以使用以下的组件来实现`Observer`模式：
+
+*Subject(主题)*
+维护一系列的观察者，方便添加或删除观察者
+
+*Observer(观察者)*
+为那些在主题状态发生改变时需获得通知的对象提供一个更新接口
+
+*ConcreteSubject(具体主题)*
+状态发生改变时，想`Observer`发出通知，存储`ConcreteObserver`的状态
+
+*ConcreteObserver(具体观察者)*
+存储一个指向`ConcreteSubject`的引用，实现`Observer`的更新接口，以使自身状态与主题的状态保持一致
+
+这里举一个小例子：
+
+```js
+function ObserverList () {
+    this.list = [];
+}
+
+ObserverList.prototype.add = function (observer) {
+    this.list.push(observer);
+}
+
+ObserverList.prototype.del = function (observer) {
+    const list = this.list;
+    return this.list.splice(list.indexOf(observer), 1);
+}
+
+// 观察者对象
+function Observer () {
+    // ....
+}
+
+Observer.prototype.update = function (payload) {
+    // ....更新时的逻辑
+}
+
+// 主题
+function Subject () {
+    this.observers = new ObserverList();
+}
+
+// 主题发生变化时，手动调用该函数，触发通知所有观察者更新
+Subject.prototype.notify = function (payload) {
+    this.observers.forEach(observer => {
+        observer.update(payload);
+    });
+}
+```
+
+上述代码未涉及到具体的观察者与主题，只涉及到了抽象的两者，具体的实现要将两者附加于具体的主题与观察者之上，如果你使用过Vue库并对其原理有一定了解，那么你应该知道其中的`Watcher`与`Dep`就是应用的这种模式。
+
+## Publish/Subscribe(发布/订阅)模式
+
