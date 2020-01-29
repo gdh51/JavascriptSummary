@@ -201,3 +201,114 @@ Subject.prototype.notify = function (payload) {
 
 ## Publish/Subscribe(发布/订阅)模式
 
+该模式使用了一个主体/事件管道，这个管道介于希望接收到通知(订阅者)的对象和激活事件的对象(发布者)之间。该事件系统运行代码定义应用程序的特定事件，这些事件可以传递自定义参数，自定义参数包含订阅者所需的值。其目的是**避免订阅者和发布者之间产生依赖关系**。
+
+这里给出一个经典的例子：
+
+```js
+class EventChannel {
+    constructor () {
+        this.channel = {};
+    }
+
+    // 这里可以理解为发布事件
+    on (name, callback) {
+        if (typeof name === 'string') {
+            if (Array.isArray(this.channel.name)) {
+                this.channel.name.push(callback);
+            } else {
+                this.channel.name = [callback];
+            }
+        }
+    }
+
+    // 这里可以理解为订阅事件
+    emit (name, payload) {
+        if (typeof name === 'string') {
+            (this.channel.name || []).forEach(callback => callback(payload))
+        }
+    }
+
+    // 这里可以理解为解除订阅
+    off (name, callback) {
+        if (typeof name === 'string') {
+            if (callback === void 0) {
+                this.channel.name = [];
+            } else {
+                this.channel.name.splice(this.channel.name.indexOf(callback), 1)
+            }
+        }
+    }
+}
+```
+
+## Mediator(中介者)模式
+
+中介者是一种行为设计模式，它允许我们公开一个统一的接口，系统的不同部分可以通过该接口进行通信。
+
+如果一个系统的各个组件之间看起来有太多的直接关系，也许是时候需要一个中心控制点了，以便各个组件可以通过这个中心控制点进行通信。`Mediator`模式促进松散耦合的方式是：确保组件的交互是通过这个中心点来处理的，而不是通过显式地引用彼此。
+
+>这里举个简单例子，假如有三个系统，分别为`a`、`b`、`c`，当我们操作`a`时，如果想要同时操作`b`，那么此时一般的解决方法就是在`a`的逻辑中，书写操作`b`的逻辑。但这样就会出现个问题：如果`b`需要更换或有新的操作需要添加，则需重写`a`逻辑，相关的逻辑被过分的耦合在了`a`的逻辑中。
+
+所以此时引入一个中间管家来处理它们之间的关系，负责为它们传达相互之间的操作。就是实现上而言，`Mediator`模式本质上是`Observer`模式的共享目标。它假设该系统中对象或模块之间的订阅和发布关系被牺牲掉了，从而维护中心联络点。
+
+### 优点与缺点
+
+该模式的最大好处就是：它能将系统中对象或组件之间所需的通信渠道从多对多减少到多对一。同样这也导致了它的缺点：它会引入单一故障点，且模块之间的通信性能会下降，因为它们总是间接通信。
+
+这里就不具体实现了，具体实现和发布订阅者模式相似，但它描述的是对象之间的交互行为。
+
+## Prototype(原型)模式
+
+该模式是一种基于现有对象模版，通过克隆方式创建对象的模式。
+
+恰好在Javascript为我们提供了Object.create()方法来实现该模式，当然我们也可以自行实现：
+
+```js
+function create (proto) {
+    function M () {};
+    M.prototype = proto;
+    return new M();
+}
+```
+
+## Command(命令)模式
+
+该模式旨在将方法调用、请求或操作封装到单一对象中，从而根据我们不同的请求对客户进行参数化和传递可供执行的方法调用。此外，这种模式将调用操作的对象与知道如何实现该操作的对象解耦，并在交换出具体类(对象)方面提供更大的整体灵活性。
+
+Command模式背后的主要思想是：它为我们提供一种分离职责的手段，这些职责包括从执行命令的任意地方发布命令以及将该职责转而委托给不同对象。实施明智的、简单的命令对象将把执行操作的动作和调用该动作的对象绑定在一起。它们始终包含一个执行操作(如run()或execute())。所有具有相同接口的Command对象可以根据需要轻松交换，这也是该模式的一个优点，这里举个简单的例子：
+
+```js
+// 有个如下的汽车购买服务
+(function () {
+    var CarManager = {
+        requestInfo (model, id) {
+            // ...
+        },
+
+        buyVehicle (model, id) {
+            // ...
+        },
+
+        arrangeViewing (model, id) {
+            // ...
+        },
+    }
+})();
+```
+
+将上述转化为Command模式，以便我们能通过以下方式执行对应的函数：
+
+```js
+CarManager.execute('requestInfo', 'xxx', 1);
+CarManager.execute('buyVehicle', 'xxx', 1);
+CarManager.execute('arrangeViewing', 'xxx', 1);
+```
+
+所以对应的模式应该为：
+
+```js
+CarManager.execute = function (method, model, id) {
+    return CarManager[method] && CarManager[method](model, id);
+}
+```
