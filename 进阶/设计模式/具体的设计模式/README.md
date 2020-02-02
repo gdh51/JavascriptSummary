@@ -339,3 +339,68 @@ var addMyEvent = function (el, ev, fn) {
 说这么多这种模式肯定也存在一些缺点，其中值得注意的问题就是性能问题，因为我们必须确定`Facade`提供给的实现抽象的功能是否具有隐形成本。(比如上述例子中，我们就进行了`if`查询)
 
 所以在使用该模式时，要了解其涉及到的性能成本是否值得我们去将其抽象。
+
+## Factory(工厂)模式
+
+该模式是一种创建型模式，涉及创建对象的概念。其分类不同于其他模式的地方在于它**不显式地要求使用一个构造函数**。而该模式可以提供一个通用的接口来创建对象，我们可以指定我们希望创建的工厂对象的类型。
+
+这里通俗一点来讲，就是在创建一个类的对象时，不通过`new`操作符来创建，通过方法直接返回一个创建好的对象。
+
+### 何时使用Factory模式
+
+Factory模式应用于如下场景时是特别有用的：
+
+- 当对象或组件设置涉及高复杂性时
+- 当需要根据所在的不同环境轻松生成对象的不同实例时
+- 当处理很多共享相同属性的小型对象或组件时
+- 在编写只需要满足一个API契约(亦称鸭子类型)的其他对象的实例对象时。对于解耦是很有用的。
+
+### 何时不应该使用Factory模式
+
+这种模式会为应用程序带来大量不必要的复杂性。除非为创建对象提供一个接口是我们正在编写的库或框架的设计目标，否则我建议坚持使用显式构造函数，以避免不必要的开销。
+
+由于对象创建的过程实际上是藏身接口之后抽象出来的，单元测试也可能带来问题，这取决于对象创建的过程有多复杂。
+
+### Abstract Factory(抽象工厂)
+
+抽象工厂模式用于封装一组具有共同目标的单个工厂。它能够将一组对象的实现细节从一般用法中分离出来。
+
+一般使用抽象工厂模式的情况是：一个系统必须独立于它所创建的对象的生成方式，或它需要与多种对象类型一起工作。这里举一个例子，假设有一个车辆工厂：
+
+```js
+var AbstractVehicleFactory = (function () {
+    var types = {};
+
+    return {
+        getVehicle: function (type, customizations) {
+            var Vehicle = types[type];
+            return (Vehicle) ? new Vehicle(customizations) : null;
+        }
+
+        registerVehicle: function (type, Vehicle) {
+            var proto = Vehicle.prototype;
+
+            if (proto.drive && proto.breakDown) {
+                types[type] = Vehicle;
+            }
+
+            return AbstractVehicleFactory;
+        }
+    }
+});
+```
+
+之后我们基于抽象车辆类型注册一些具体的汽车：
+
+```js
+function Car () {
+    // ...
+}
+AbstractVehicleFactory.registerVehicle('car', Car);
+
+// 实例化一个Car
+var car = AbstractVehicleFactory.getVehicle('car', {
+    color: 'lime green',
+    state: 'like new'
+});
+```
