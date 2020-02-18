@@ -72,5 +72,45 @@ let photo = {
 `MVP`中的`P`代表表示器。这是一个包含用于`View`(视图)的用户界面业务逻辑的组件。与`MVC`不同，来自`View`的调用将委托给表示器，表示器是从`View`中解耦，通过接口与它对话。
 
 在`MVP`中，当`Model`(模型)变化时，监控`Model`和更新`View`。`P`将`Model`有效地绑定至`View`，这是以前在`MVC`中`Controller`的责任。
-
+8
 由`View`进行请求，表示器执行任何与用户请求有关的工作，并将数据回传给它们。在这方面，它们检索数据并操作数据，并确定应如何在`View`中显示这些数据。`Model`可能会触发事件，表示器的角色是订阅它们，这样就可以更新`View`。在这种被动架构中，没有直接数据绑定的概念。`View`暴露了`setter`设置器，表示器可以用它来设置数据。
+
+## MVVM
+
+`MVVM(`模型——视图——视图模型)是一种基于`MVC`和`MVP`的架构模式，它试图更清晰地将用户界面(`UI`)开发从应用程序的业务逻辑与行为中分离。为此，很多这种模式的实现都要利用声明式数据绑定来实现将`View`工作从其他层分离。
+
+这有助于在同一个代码库中`UI`和开发工作的同时进行。`UI`开发人员在其文档标记(`HTML`)内编写到`ViewModel`的绑定，其中的`Model`和`ViewModel`都由研究应用程序逻辑的开发人员来进行维护。
+
+### Model
+
+同其他的架构模式一样，`MVVM`中的`Model`(模型)也表示一个特定的对象(比如一个用户账户，一张照片等等)
+
+**`Model`保存着信息**，但通常不处理行为。它们不会格式化信息或影响数据在浏览器中显示的方式，因为这不是它们的责任。**数据格式化应由`View`来处理，而行为是业务逻辑应该封装在`ViewModel`中**。
+
+### View
+
+与`MVC`一样，`View`实际上仅是与用户进行交互的应用程序的一部分。它是一个交互式`UI`，描绘`ViewModel`的状态。`MVVM`的主动`View`包含数据绑定、事件和行为。但是要注意的是，`View`并不负责处理状态；它仅仅是让状态与`ViewModel`保持同步。
+
+在这里`View`显示来自`ViewModel`的信息，向它传递命令并在`ViewModel`的状态变化时进行更新。
+
+### ViewModel
+
+可以将`ViewModel`作为一个专门的`Controller`，充当数据转换器。它将`Model`信息转变为`View`信息，还将命令从`View`传递到`Model`。
+
+`ViewModel`位于`UI`层的后面。它暴露`View`所需的数据(从`Model`那里)，可以被视为`View`数据和操作的源头。
+
+### 小结View与ViewModel
+
+**`View`和`ViewModel`之间通过数据绑定和事件进行通信。`Model`和`ViewModel`上的属性通过双向绑定进行同步和更新**。
+
+### 小结Model与ViewModel
+
+`ViewModel`似乎是完全负责`MVVM`中的`Model`。**`ViewModel`为了数据绑定而暴露`Model`或`Model`属性，也可以包含接口，用于获取和操作在`View`中暴露的属性**。
+
+## MVC、MVP与MVVM
+
+`MVP`与`MVVM`均为`MVC`的衍生品。`MVC`与其他衍生品之间的主要区别是每一层对其他层的依赖，以及它们是如何紧密地互相绑定的。
+
+在`MVC`中，`View`位于架构之上，与``Controller``相邻。`Model`位于`Controller`之下，因此`View`了解`Controller`，`Controller`了解`Model`。在这里，`View`能够直接访问`Model`。但是，想`View`暴露完整的`Model`可能会带来安全性和性能成本，这取决于应用程序的复杂性。
+
+在`MVP`中，`Controller`的作用被`Presenter`所替代。表示器与`View`位于同一位置，监听`View`和`Model`的事件，并调解它们之间的行动。与`MVVM`不同，它没有使用将`View`绑定至`ViewModel`的机制，因此我们转而依赖每个`View`来实现用于让`Presenter`与`View`进行交互的接口。
