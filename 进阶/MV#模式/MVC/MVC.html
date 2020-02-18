@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>0</div>
+    <script>
+        // 假设为一个图片模型
+        let Model = {
+            src: 'd://c/c/xx.jpg',
+            name: 'A photo',
+
+            Subject: null,
+
+            getName() {
+                return Model.name;
+            },
+
+            setName(val) {
+                Model.name = val;
+            },
+
+            init(view) {
+                Model.Subject = new Subject();
+                Model.Subject.ob(view);
+            }
+        };
+
+        let View = {
+            _ob: null,
+
+            // 简单的渲染函数
+            render() {
+                const div = document.querySelector('div');
+                div.innerHTML = `${Model.getName()}`;
+            },
+
+            init() {
+                View._ob = new Observer(View.render);
+                View.render();
+
+                // 这里添加个用于用户交互的事件
+                document.body.addEventListener('click', Controller.changeName);
+
+                return View._ob;
+            }
+        }
+
+        let Controller = {
+            // 随便写个改变Model的方法
+
+            text: 1,
+
+            changeName() {
+                Controller.text += 1;
+                Model.setName(Controller.text);
+                Model.Subject.notify();
+            },
+
+            init() {
+                let ob = View.init();
+                Model.init(ob);
+            }
+        }
+
+        // 一个简单的观察者模式
+        function Subject() {
+            this.observers = [];
+        }
+
+        Subject.prototype.ob = function (ob) {
+            this.observers.push(ob);
+        }
+
+        Subject.prototype.notify = function () {
+            this.observers.forEach(ob => ob.update());
+        }
+
+        function Observer(callback) {
+            this.cb = callback;
+        }
+
+        Observer.prototype.update = function () {
+            this.cb();
+        }
+
+        // 初始化
+        Controller.init();
+    </script>
+</body>
+
+</html>
