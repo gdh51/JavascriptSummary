@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="add">add</button>
+    <button id="sub">sub</button>
+    <div>1</div>
+    <script>
+        let myApp = {};
+
+        myapp.Model = function () {
+
+            var val = 0;
+
+            this.add = function (v) {
+                if (val < 100) val += v;
+            };
+            this.sub = function (v) {
+                if (val > 0) val -= v;
+            };
+
+            this.getVal = function () {
+                return val;
+            };
+
+        };
+
+        myapp.View = function () {
+
+            var div = document.querySelector('div'),
+                add = document.querySelector('#add'),
+                sub = document.querySelector('#sub');
+
+            this.render = function (model) {
+                div.innerHTML = `${model.getName()}`;
+            };
+
+            this.init = function () {
+
+                // 这里直接将自身作为Setter接口暴露给表示器
+                var presenter = new myapp.Presenter(this);
+                add.click(presenter.increase);
+                sub.click(presenter.decrease);
+            };
+
+        };
+
+        myapp.Presenter = function (view) {
+
+            var _model = new myapp.Model();
+            var _view = view;
+
+            // 渲染视图
+            _view.render(_model);
+
+            this.increase = function () {
+                _model.add(1);
+                _view.render(_model);
+            };
+
+            this.decrease = function () {
+                _model.sub(1);
+                _view.render(_model);
+            };
+
+        };
+
+        // 初始化示例
+        (function() {
+        var view = new myapp.View();
+        view.init();
+        })();
+    </script>
+</body>
+
+</html>
