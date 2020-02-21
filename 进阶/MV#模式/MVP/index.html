@@ -45,10 +45,9 @@
 
                 // 这里直接将自身作为Setter接口暴露给表示器
                 var presenter = new myapp.Presenter(this);
-                add.click(presenter.increase);
-                sub.click(presenter.decrease);
+                add.onclick = presenter.increase;
+                sub.onclick = presenter.decrease;
             };
-
         };
 
         myapp.Presenter = function (view) {
@@ -73,8 +72,8 @@
 
         // 初始化示例
         (function() {
-        var view = new myapp.View();
-        view.init();
+            var view = new myapp.View();
+            view.init();
         })();
     </script>
 </body>

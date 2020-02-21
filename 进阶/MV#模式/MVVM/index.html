@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="add">add</button>
+    <button id="sub">sub</button>
+    <div>1</div>
+    <script>
+        // 观察者模式组件
+        function Subject () {
+            this.obs = [];
+        }
+
+        Subject.prototype.notify = function (payload) {
+            this.obs.forEach(ob => ob.update(payload))
+        };
+
+        Subject.prototype.add = function (ob) {
+            this.obs.push(ob);
+        };
+
+        function Observer (subject, callback) {
+            this.watch = subject;
+
+            // 当目标发生变化时，期望每个观察者执行的函数
+            this.callback = callback;
+        }
+
+        Observer.prototype.update = function (payload) {
+            this.callback(payload);
+        };
+
+        let app = {};
+
+        app.View = function (viewmodel) {
+            var div = document.querySelector('div'),
+                add = document.querySelector('#add'),
+                sub = document.querySelector('#sub');
+
+            this.render = function (viewmodel) {
+                div.innerHTML = `${viewmodel.state.name}`;
+            };
+
+            add.onclick = viewmodel.add;
+            sub.onclick = viewmodel.sub1;
+
+            // 用view观察viewmodel的State
+            viewmodel.sub.add(new Observer(viewmodel.sub, () => {
+                this.render(viewmodel);
+            }));
+
+            this.render(viewmodel);
+        };
+
+        app.ViewModel = function (model) {
+
+            let self = this;
+
+            // 这里我们将Model上的数据化为一个新的接口暴露给View观察
+            this.state = null;
+            this.sub = new Subject();
+
+            // 观察model，更新时更新viewmodel和view
+            this.ob = new Observer(model.sub, () => {
+                this.state = computedState(model);
+
+                // 然后通知View组件更新
+                this.sub.notify();
+            });
+
+            model.sub.add(this.ob);
+
+            this.state = computedState(model);
+
+            // 观察对象(这里其实我们的model并未与viewmodel双向绑定)
+
+            // 一些业务逻辑
+            this.add = function () {
+                self.state = computedState(null, self.state.name + 1);
+
+                // 通知model和view更新
+                self.sub.notify(self.state.name);
+            }
+
+            this.sub1 = function () {
+                self.state = computedState(null, self.state.name - 1);
+                self.sub.notify(self.state.name - 1);
+            }
+
+            // 更新viewmodel的State，看是由谁主动触发的更新
+            function computedState (model, view) {
+
+                // view主动触发更新，由viewmodel导致model更改
+
+                // model主动触发更新，由model导致viewmodel更改
+                return {
+
+                    // 这里为了区分model的name，我们在原值上+1
+                    name: view !== undefined ? view : model.name + 1
+                }
+            }
+        };
+
+        app.Model = function () {
+            this.name = 1;
+
+            // 凡事有个先后顺序这里我们只有等会在弄
+            this.ob = null;
+            this.sub = new Subject();
+        };
+
+        app.init = function () {
+            const Model = new app.Model();
+            const ViewModel = new app.ViewModel(Model);
+
+            // Model观察viewmodel，在viewmodel更新时更新model
+            Model.ob = new Observer(ViewModel.sub, (payload) => {
+                Model.name = payload;
+            });
+            ViewModel.sub.add(Model.ob);
+            new app.View(ViewModel);
+        };
+        new app.init();
+    </script>
+</body>
+</html>

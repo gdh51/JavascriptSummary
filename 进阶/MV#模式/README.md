@@ -103,6 +103,8 @@ MVP模式的优点是能够提高应用程序的可测试性，在`View`和`Mode
 
 这有助于在同一个代码库中`UI`和开发工作的同时进行。`UI`开发人员在其文档标记(`HTML`)内编写到`ViewModel`的绑定，其中的`Model`和`ViewModel`都由研究应用程序逻辑的开发人员来进行维护。
 
+![MVVM](./imgs/MVVM.svg)
+
 ### Model
 
 同其他的架构模式一样，`MVVM`中的`Model`(模型)也表示一个特定的对象(比如一个用户账户，一张照片等等)
@@ -117,7 +119,7 @@ MVP模式的优点是能够提高应用程序的可测试性，在`View`和`Mode
 
 ### ViewModel
 
-可以将`ViewModel`作为一个专门的`Controller`，充当数据转换器。它将`Model`信息转变为`View`信息，还将命令从`View`传递到`Model`。
+可以将`ViewModel`作为一个专门的`Controller`，充当数据转换器。**它将`Model`信息转变为`View`信息，还将命令从`View`传递到`Model`**。
 
 `ViewModel`位于`UI`层的后面。它暴露`View`所需的数据(从`Model`那里)，可以被视为`View`数据和操作的源头。
 
@@ -129,10 +131,24 @@ MVP模式的优点是能够提高应用程序的可测试性，在`View`和`Mode
 
 `ViewModel`似乎是完全负责`MVVM`中的`Model`。**`ViewModel`为了数据绑定而暴露`Model`或`Model`属性，也可以包含接口，用于获取和操作在`View`中暴露的属性**。
 
+### 总结MVVM模式中组件关系
+
+从上面的描述中我们可以得出三个组件的以下关系：
+
+1. `View`与`ViewModel`进行数据绑定，包括其事件、行为等等，`ViewModel`与`Model`进行数据的双向绑定。
+2. `View`使用的`Model`的数据是通过`ViewModel`格式化后的`Model`的子集(当然也可以为原数据)
+3. `Model`仍保留原数据信息
+
+对比之前的图片，加深理解。
+
+[MVVM实例](./MVVM/index.html)
+
 ## MVC、MVP与MVVM
 
 `MVP`与`MVVM`均为`MVC`的衍生品。`MVC`与其他衍生品之间的主要区别是每一层对其他层的依赖，以及它们是如何紧密地互相绑定的。
 
-在`MVC`中，`View`位于架构之上，与``Controller``相邻。`Model`位于`Controller`之下，因此`View`了解`Controller`，`Controller`了解`Model`。在这里，`View`能够直接访问`Model`。但是，想`View`暴露完整的`Model`可能会带来安全性和性能成本，这取决于应用程序的复杂性。
+在`MVC`中，`View`位于架构之上，与``Controller``相邻。`Model`位于`Controller`之下，因此`View`了解`Controller`，`Controller`了解`Model`。**在这里，`View`能够直接访问`Model`**。但是，想`View`暴露完整的`Model`可能会带来安全性和性能成本，这取决于应用程序的复杂性。
 
 在`MVP`中，`Controller`的作用被`Presenter`所替代。表示器与`View`位于同一位置，监听`View`和`Model`的事件，并调解它们之间的行动。与`MVVM`不同，它没有使用将`View`绑定至`ViewModel`的机制，因此我们转而依赖每个`View`来实现用于让`Presenter`与`View`进行交互的接口。
+
+因此，`MVVM`允许我们创建`Model`的特定于`View`的子集，它们可以包含状态和逻辑信息，无需向`View`暴露整个`Model`。与`MVP`的`Presenter`不同，引用`View`时不需要`ViewModel`。View可以绑定到`ViewModel`的属性上，而属性会将`Model`所包含的数据暴露给`View`。
