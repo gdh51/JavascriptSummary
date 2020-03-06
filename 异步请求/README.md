@@ -373,7 +373,7 @@ Access-Control-Allow-Credentials：true
 
 首先说明IE在所有版本都不支持
 
-`fetch` 是一个相当底层的 API，在实际项目使用中，需要做各种各样的封装和异常处理，而并非开箱即用
+`fetch` 是一个相当**底层**的 API，在实际项目使用中，需要做各种各样的封装和异常处理，而并非开箱即用
 
 书写一个请求的形式如下：
 
@@ -386,20 +386,46 @@ fetch(url, options).then(response=> {
 
 //即：
 fetch(url, {
-  method: "POST",
-  body: JSON.stringify(data),
-  headers: {
-    "Content-Type": "application/json"
-  },
-  credentials: "same-origin"
+    method: "POST",
+
+    // 这里要设置符合对应格式的Content-Type
+    body: JSON.stringify(data),
+    headers: {
+        "Content-Type": "application/json"
+    },
+    credentials: "same-origin"
 }).then((res)=>{
-  console.log(res);
+    console.log(res);
 }).catch((err)=>{
-  console.log(err);
+    console.log(err);
 });
 ```
 
 ### options对象的配置选项
+
+一个完整的配置相包括：
+
+```js
+fetch(url, {
+
+    // 荷载，必须匹配Content-Type头部
+    body: JSON.stringify(data),
+
+    // 是否缓存，可选项有no-cache, reload, force-cache, only-if-cached
+    cache: 'no-cache', // *default
+
+    // 是否携带凭证(cookie)，默认不携带
+    credentials: 'same-origin', // include, same-origin, *omit
+    headers: {
+      'user-agent': 'Mozilla/4.0 MDN Example',
+      'content-type': 'application/json'
+    },
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, cors, *same-origin
+    redirect: 'follow', // manual, *follow, error
+    referrer: 'no-referrer', // *client, no-referrer
+})
+```
 
 #### method
 
@@ -407,7 +433,7 @@ fetch(url, {
 
 #### headers
 
-设置请求的头部,默认为{}
+设置请求的头部,默认为`{}`
 
 ### 检查请求是否成功
 
@@ -415,8 +441,8 @@ fetch(url, {
 
 ### 默认不携带cookie
 
-`Fetch`默认不会携带cookie,要想请求时携带,请设置option对象的credentials属性,它有以下值：
+`Fetch`默认不会携带`cookie`,要想请求时携带,请设置`option`对象的`credentials`属性,它有以下值：
 
-+ `'include'`：任何请求都携带cookie
-+ `'same-origin'`：只有同源的请求才携带cookie
-+ `'omit'`：任何请求不携带cookie
++ `'include'`：任何请求都携带`cookie`
++ `'same-origin'`：只有同源的请求才携带`cookie`
++ `'omit'`：任何请求不携带`cookie`(默认值，但之后版本有修改)

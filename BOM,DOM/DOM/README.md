@@ -1,12 +1,16 @@
 # DOM
 
 ## DOM概览
+
 HTML文档的树状结构包含表示HTML标签或元素和表示文本字符串的节点，它也可能包含表示HTML注释节点。
 `Document`、`Element`和`Text`是`Node`的子类
+
 ```js
 Document.prototype instanceof Node //true
 ```
+
 Node及子类原型链大致结构:
+
 <pre>
 |--Node
    |--Document
@@ -26,9 +30,11 @@ Node及子类原型链大致结构:
          |--HTMLInputElement
          |--etc...
 </pre>
+
 `Document`类型代表一个HTML或XML文档，`Element`类型代表该文档的一个元素。`HTMLDocument`和`HTMLElement`子类只是针对于HTML文档和元素。
 
 选取文档的元素
+
 + 用指定的`id`属性
 + 用指定的`name`属性
 + 用指定的标签名字
@@ -151,9 +157,11 @@ HTML元素的属性值代表了这些元素的`HTMLElement`对象的属性值（
 `Text`和`CDATASection`都是`CharacterData`的子类型，`CharacterData`定义了`Data`属性，它和`nodeValue`的文本相同。
 
 #### 数据集属性
+
 HTML5在`Element`对象上定义了`dataset`属性。它的各个属性对应去掉前缀`data—属性`。所以`dataset.name`保存着`data-name`的值。带连字符的属性对应于驼峰命名法属性名：`data-name-id`属性就变成`data.nameId`。
 
 #### 一些特殊的元素的属性
+
 + 表单和元素属性
 `Form`对象中有`action`、`encoding`、`method`、`target`属性对应其HTML属性，还有一个`elements`数组，存放着该元素内所有的表单元素
 
@@ -184,9 +192,11 @@ HTML5在`Element`对象上定义了`dataset`属性。它的各个属性对应去
 `Element`和`HTMLDocument`等类型是类，它们不是构造函数，但它们有原型对象，可以用自定义方法拓展它们（IE8支持`Element`、`HTMLDocument`和`Text`的可扩展性，但不支持`Node`、`Document`、`HTMLElement`或子类性的扩可在的属性）
 
 ### 文档、视口大小、元素大小计算
+
 [详情](./文档、视口)
 
 ### 遍历(该段可以忽略,基本上不会用)
+
 遍历DOM元素的原生遍历器
 
 #### NodeIterator
@@ -239,10 +249,12 @@ let filter = function(node){
 [详情](./Range范围对象)
 
 ## MutationObserver
+
 DOM4标准,监控DOM树所做的更改。它用来取代DOM3级事件中的`MutationEvent`,即`DOMNodeInserted`、`DOMNodeRemoved`、`DOMSubtreeModified`、`DOMAttrModified`、
 `DOMCharacterDataModified`、`DOMNodeInsertedIntoDocument`和`DOMNodeRemovedFromDocument`事件,这些事件已经废弃,如使用请做好兼容
 
 ### 向后兼容,MutationEvent兼容性
+
 + `MutationEvent`在IE浏览器中最低支持到**IE9**
 + 在webkit内核的浏览器中，不支持`DOMAttrModified`事件
 + IE,Edge以及Firefox浏览器下不支持`DOMNodeInsertedIntoDocument`和`DOMNodeRemovedFromDocument`事件
@@ -250,9 +262,11 @@ DOM4标准,监控DOM树所做的更改。它用来取代DOM3级事件中的`Muta
 `MutationEvent`中的所有事件都被设计成无法取消，如果可以取消`MutationEvent`事件则会导致现有的DOM接口无法对文档进行改变
 
 ### MutationObserver兼容性
+
 IE11及其以上即可
 
 ### MutationObserver构造函数
+
 ```js
 new MutationObserver(function(mutations, observer){
  //do somethings
@@ -264,9 +278,11 @@ new MutationObserver(function(mutations, observer){
 回调函数拥有两个参数：一个是描述所有被触发改动的`MutationRecord`对象数组，另一个是调用该函数的`MutationObserver`对象。
 
 ### MutationObserver对象方法
+
 通过构造函数实例化会返回一个`MutationObserver`对象, 它有以下方法
 
 #### MutationObserver.prototype.observe(target[, options])
+
 配置了`MutationObserver`对象的回调方法以开始接收与给定选项匹配的DOM变化的通知。
 
 + target: 必选参数,表示DOM树中的一个要观察变化的DOM Node (可能是一个Element), 或者是被观察的子节点树的根节点。
@@ -288,9 +304,11 @@ options对象参数里面有以下选项：
 + attributeFilter：如果不是所有的属性改变都需要被观察，并且`attributes`设置为`true`或者被忽略，那么设置一个需要观察的属性本地名称（不需要命名空间）的列表
 
 #### MutationObserver.prototype.disconnect()
+
 要停止这个`MutationObserver` （以便不再触发它的回调方法），需要调用`MutationObserver.disconnect()`方法。
 
 #### MutationObserver.prototype.takeRecords()
+
 返回已检测到但尚未由观察者的回调函数处理的所有匹配DOM更改的列表，使变更队列保持为空。
 
 此方法最常见的使用场景是在断开观察者之前立即获取所有未处理的更改记录，以便在停止观察者时可以处理任何未处理的更改。
@@ -298,6 +316,7 @@ options对象参数里面有以下选项：
 返回一个`MutationRecord`对象列表，每个对象都描述了应用于DOM树某部分的一次改动。
 
 ### MutationObserver 与 MutationEvent各事件的关系
+
 |MutationEvent|	MutationObserver options|
 |-------------|-------------------------|
 |DOMNodeInserted|	{ childList: true, subtree: true }|
@@ -307,6 +326,7 @@ options对象参数里面有以下选项：
 |DOMCharacterDataModified|	{ characterData: true, subtree: true }|
 
 ### MutationRecord
+
 变动记录中的属性如下：
 
 + type：如果是属性变化，返回"`attributes`"，如果是一个`CharacterData`节点（`Text`节点、`Comment`节点）变化，返回"`characterData`"，节点树变化返回"`childList`"

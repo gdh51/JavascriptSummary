@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file">
+    <button>上传</button>
+    <script>
+        const btn = document.querySelector('button');
+        const file = document.querySelector('input');
+
+        btn.onclick = function () {
+            if (file.files.length === 0) return btn.innerText = '请上传个文件先';
+            let formData = new FormData();
+            formData.append('img', file.files[0]);
+            fetch('./file', {
+                method: 'PUT',
+                body: formData
+            }).then(response => response.json())
+                .then(text => console.log(text))
+                .catch(text => console.log(text));
+        }
+    </script>
+</body>
+
+</html>
