@@ -292,3 +292,4 @@ self.addEventListener('notificationclose', event => {
 
 [参考1](https://zhuanlan.zhihu.com/p/28461857)
 [参考2](https://developers.google.cn/web/fundamentals/primers/service-workers/)
+[qqmusic的sw策略](./sw-qqmusic.js)
