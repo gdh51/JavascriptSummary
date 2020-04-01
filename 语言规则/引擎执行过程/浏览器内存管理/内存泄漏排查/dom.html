@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="create">添加</button>
+    <script>
+        function Father(params) {
+
+        }
+
+        // 这里实例化一个Father是为了让大家知道：
+        // 在快照中对应对象在其构造函数下
+        let d = new Father();
+
+        var detachedNodes;
+
+        function create() {
+            var ul = document.createElement('ul');
+            for (var i = 0; i < 10; i++) {
+                var li = document.createElement('li');
+                ul.appendChild(li);
+            }
+            detachedTree = ul;
+        }
+        document.getElementById('create').addEventListener('click', create);
+    </script>
+</body>
+
+</html>

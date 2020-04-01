@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="create">添加</button>
+    <script>
+        var detachedNodes;
+
+        function createLargeClosure() {
+            var largeStr = new Array(1000000).join('x');
+
+            detachedNodes = function () { // this IS a named function
+                return largeStr;
+            };
+
+
+        }
+        document.getElementById('create').addEventListener('click', createLargeClosure);
+    </script>
+</body>
+
+</html>
