@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul class="ul">
+        <li>
+            <a href="/" class="a">初始页面</a>
+        </li>
+        <li>
+            <a href="/b" class="b">b</a>
+        </li>
+        <li>
+            <a href="/c" class="c">c</a>
+        </li>
+    </ul>
+    <div class="app">初始内容</div>
+    <button class="back" type="button">后退</button>
+    <script>
+        class HistoryRouter {
+            constructor(path) {
+                this.routes = {};
+                history.replaceState({ path }, null, path);
+                window.addEventListener('popstate', e => {
+                    console.log(e);
+                    const path = e.state && e.state.path;
+                    this.render(path);
+                });
+                document.querySelector('.back').addEventListener('click', () => this.back());
+            }
+
+            static init() {
+                window.router = new HistoryRouter();
+            }
+
+            route(path, cb) {
+                this.routes[path] = cb || function () {};
+            }
+
+            render(path) {
+                this.routes[path]();
+            }
+
+            go(path) {
+                history.pushState({ path }, null, path);
+            }
+
+            back() {
+                history.back();
+            }
+        }
+
+        const contentBox = document.querySelector('.app');
+        const ul = document.querySelector('.ul');
+
+        // 因为为文本协议，所以我们这里手动做跳转处理
+        ul.addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                router.go(e.target.getAttribute('href'));
+            }
+        });
+        HistoryRouter.init();
+
+        // 注册路由表
+        router.route('/', () => render('.a'));
+        router.route('/b', () => render('.b'));
+        router.route('/c', () => render('.c'));
+
+        // 渲染视图
+        function render(query) {
+            contentBox.innerHTML = document.querySelector(query).innerHTML;
+        }
+    </script>
+</body>
+
+</html>

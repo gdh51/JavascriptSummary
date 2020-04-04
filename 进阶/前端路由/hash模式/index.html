@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul>
+        <li>
+            <a href="#/" class="a">初始页面</a>
+        </li>
+        <li>
+            <a href="#/b" class="b">b</a>
+        </li>
+        <li>
+            <a href="#/c" class="c">c</a>
+        </li>
+    </ul>
+    <button class="back">后退</button>
+    <div class="app">初始内容</div>
+    <script>
+        class HashRouter {
+            constructor () {
+                this.routes = {};
+                this.current = '/';
+                this.historyStack = [];
+                this.backFlag = false;
+                window.addEventListener('load', () => this.render());
+                window.addEventListener('hashchange', () => this.render());
+                document.querySelector('.back').addEventListener('click', () => this.back());
+            }
+
+            static init () {
+                window.router = new HashRouter();
+            }
+
+            route(path, cb) {
+                this.routes[path] = cb || function () {};
+            }
+
+            render() {
+                if (this.current === location.hash.slice(1)) return;
+
+                if (this.backFlag) {
+                    this.backFlag = false;
+                } else {
+                    // 先存入之前的url，以便倒退
+                    this.historyStack.push(this.current);
+                }
+
+
+                this.current = location.hash.slice(1) || '/';
+                this.routes[this.current]();
+            }
+
+            back () {
+                location.hash = this.historyStack.pop();
+
+                // 标记这次是手动后退，防止重复渲染
+                this.backFlag = true;
+            }
+        }
+        const contentBox = document.querySelector('.app');
+        HashRouter.init();
+
+        // 注册路由表
+        router.route('/', () => render('.a'));
+        router.route('/b', () => render('.b'));
+        router.route('/c', () => render('.c'));
+
+        // 渲染视图
+        function render (query) {
+            contentBox.innerHTML = document.querySelector(query).innerHTML;
+        }
+    </script>
+</body>
+</html>
