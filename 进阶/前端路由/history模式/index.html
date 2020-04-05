@@ -48,6 +48,10 @@
 
             go(path) {
                 history.pushState({ path }, null, path);
+
+                // 通过pushState与replaceState不会触发popstate事件，
+                // 所以这里我们要手动触发
+                this.routes[path] || this.routes[path]();
             }
 
             back() {
