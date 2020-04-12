@@ -45,7 +45,7 @@ ____
 
 ### performance.getEntriesByType(type)
 
-该方法用于返回一个指定type类型的属性获取一个该类型所有性能对象的数组，其中type可以为：
+该方法用于返回一个指定`type`类型的属性获取一个该类型所有性能对象的数组，其中`type`可以为：
 
 + `frame/navigation`：返回`performance.timing`对象，包含从输入URL到页面加载完成的时间
 + `resource`：已解析的请求资源的URL对象的数组
@@ -53,7 +53,7 @@ ____
 + `measure`：通过调用`performance.measure()`创建度量时使用的名称
 + `paint`：浏览器绘制到屏幕所需的时间对象
 
-这里我们重点关注一下通过`performance.getEntriesByType('navigation')`获取到的`performance.timing`对象，该对象与直接从`performance.timing`中返回的对象的不同在于，计算时间起点不一样，前者以0为起点，后者以软件纪元的时间为起点。
+这里我们重点关注一下通过`performance.getEntriesByType('navigation')`获取到的`performance.timing`对象，该对象与直接从`performance.timing`中返回的对象的不同在于它获取的是资源请求的时间(不包含`DOM`)且计算时间起点不一样，前者以`0`为起点，后者以软件纪元的时间为起点。
 
 函数返回的对象具体为：
 
@@ -212,3 +212,28 @@ let measure = window.performance.getEntriesByType('measure');
 + `usedJSHeapSize`：堆中当前所有正在使用的对象所占内存的总量
 + `totalJSHeapSize`：未被对象使用的空闲空间在内的堆的总大小
 + `jsHeapSizeLimit`：堆的最大容量
+
+## 题外话1——defer/async与DOMContenLoaded
+
+基于上述的时间中的`DOMContentLoaded`，它表示文档（`DOM`）被加载和解析完成，在不包含脚本的文档中，它的时间即文档的解析时间；在包含脚本的文档中，脚本会阻塞文档的解析，且脚本需要等待之前的`CSS`解析完毕，待所有的文档解析完毕后才能触发。
+
+此时假设一个脚本具有`defer/async`属性，那么会有什么区别呢？
+
+首先是`defer`属性，它表示脚本会在文档解析完毕后执行，同时它会在解析到该行时在后台进行脚本的下载，文档的解析过程不会中断。那么**此时`DOMContentLoaded`事件会在文档解析完毕后`defer`下载的脚本执行完毕后触发**。
+
+而使用`async`的脚本不会影响`DOMContentLoaded`的触发，它表示解析到该脚本时异步下载脚本，文档的解析过程不中断，但脚本下载完毕后会立即执行。这就意味着，如果在文档解析完毕前下载完成，那么会阻塞文档的解析并执行脚本；如果在文档解析完毕后下载完成，那么与文档的解析和加载就毫无干系了(即`DOMContentLoaded`事件的触发不会受其阻塞)。
+
+## 题外话2——首屏/白屏时间/用户可操作时间
+
+(基于`performance api`)
+**白屏**时间指用户输入`URL`到页面出现一点内容之间所用的时间，一般情况它在`domloading - navigationStart`这个时间段，但使用诸如`Vue`这样的框架时，它的时间会被延后到框架挂载对应的`DOM`元素，在`Vue`中我们需要在其根组件来的`Mounted`生命周期来获取。
+
+**首屏**时间指用户输入`URL`到页面的内容完成渲染完成出现的时间(包括资源的下载，比如图片，那么则是最后一张图片加载完成的时间)，针对普通类型的网页来说首屏渲染的事件都可以通过`loadEventStart - navigationStart`，但如果有些渲染逻辑是处于`load`事件中，则可能选取其他值来计算，具体的看实际情况。
+
+针对上面两个时间点，浏览器可以通过`performance.getEntriesByType('paint')`来获取一个更精准的信息。
+
+![paint](./img/paint.png)
+
+这里有更精准的时间，但是这会在框架的操作中产生误差。
+
+**用户可操作时间**应该为页面完全加载后即`loadEventEnd - navigationStart`
