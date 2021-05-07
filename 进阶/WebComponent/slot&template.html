@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Slot&Template</title>
+    </head>
+    <body>
+        <tag-one></tag-one>
+        <template id="tag-one">
+            <span>一个简单的模板</span>
+        </template>
+        <script>
+            customElements.define(
+                'tag-one',
+                class extends HTMLElement {
+                    constructor() {
+                        super()
+                        const templateContent = document.querySelector(
+                            '#tag-one'
+                        ).content
+
+                        this.attachShadow({ mode: 'open' }).appendChild(
+                            templateContent.cloneNode(true)
+                        )
+                    }
+                }
+            )
+        </script>
+        <!-- 分割线 -->
+        <tag-two>
+            <span>我是默认插槽插入的内容1</span>
+            <span>我是默认插槽插入的内容2</span>
+            <span>我是默认插槽插入的内容3</span>
+            <p slot="a" id="c"><span>我是具名插槽a插入的内容</span></p>
+        </tag-two>
+        <template id="tag-two">
+            <style>
+                ::slotted(p span) {
+                    color: red;
+                }
+            </style>
+            <slot>我是默认的内容1</slot>
+            <slot>我是默认的内容2</slot>
+            <slot>我是默认的内容3</slot>
+            <slot name="a">我的具名插槽a的默认内容</slot>
+        </template>
+        <script>
+            customElements.define(
+                'tag-two',
+                class extends HTMLElement {
+                    constructor() {
+                        super()
+                        const templateContent = document.querySelector(
+                            '#tag-two'
+                        ).content
+
+                        this.attachShadow({ mode: 'open' }).appendChild(
+                            templateContent.cloneNode(true)
+                        )
+                    }
+                    connectedCallback() {
+                        const s = document.querySelector('#c')
+                        console.log(s.assignedSlot)
+                    }
+                }
+            )
+        </script>
+    </body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Event</title>
+    </head>
+    <body>
+        <my-c></my-c>
+        <script>
+            document
+                .querySelector('my-c')
+                .addEventListener('1custom', e =>
+                    console.log('message from event:', e)
+                )
+            document
+                .querySelector('my-c')
+                .addEventListener('click', e =>
+                    console.log('message from event:', e)
+                )
+            customElements.define(
+                'my-c',
+                class extends HTMLElement {
+                    constructor() {
+                        super()
+                        this.attachShadow({ mode: 'open' })
+                        this.shadowRoot.innerHTML = `<div>
+                            <p>我我</p>
+                            <p>塔塔</p></div>`
+                    }
+
+                    connectedCallback() {
+                        this.shadowRoot.querySelector('p').dispatchEvent(
+                            new CustomEvent('1custom', {
+                                detail: { message: 'a custom event' },
+                                composed: true
+                            })
+                        )
+                    }
+                }
+            )
+        </script>
+    </body>
+</html>

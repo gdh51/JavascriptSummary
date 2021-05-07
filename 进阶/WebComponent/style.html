@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Style Isolation</title>
+        <style>
+            .red {
+                color: aqua;
+            }
+        </style>
+    </head>
+    <body>
+        <p class="red">
+            我没有颜色
+        </div>
+        <div class="shadow-host"></div>
+        <my-tag></my-tag>
+        <script>
+            const host = document.querySelector('.shadow-host')
+            const shadowRoot = host.attachShadow({ mode: 'open' })
+            shadowRoot.innerHTML = `
+<style>
+.red {
+    background: red;
+}    
+</style>
+<p class="red">
+我有颜色    
+</p>
+`
+        </script>
+        <script>
+            customElements.define('my-tag', class extends HTMLElement{
+                constructor() {
+                    super()
+                    this.attachShadow({ mode: 'open' })
+                    this.shadowRoot.innerHTML = 
+`
+<style>
+:host {
+    --bc: red;
+}
+p {
+    color: var(--bc);
+}
+</style>
+<p>
+我可以通过外部定义颜色    
+</p>               
+`
+                }
+            })
+        </script>
+    </body>
+</html>
