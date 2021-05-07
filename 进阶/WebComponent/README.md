@@ -5,6 +5,7 @@
 -   `CustomElements`自定义元素
 -   `ShadowDOM`影子`DOM`
 -   `HTML Template/Slot`插槽与模板
+-   `ES Module`模块
 
 一个常用的`Web Component`的制作方法通常为以下步骤
 
@@ -13,7 +14,7 @@
 3. 将`HTML`模板定义到`ShadowDOM`中，并附着到注册的自定义元素上
 4. 立即使用它！
 
-下面将这些组成页面组件的组件拆分别分别讲解，最后在通过一个例子来查看它们相互合作的方式。·
+下面将这些组成页面组件的组件拆分别分别讲解，最后在通过一个例子来查看它们相互合作的方式。
 
 ## CustomElements — 自定义元素
 
@@ -58,7 +59,7 @@ customElements.define('my-modal', class extend HTMLElement{ ... }, { extends: 'p
 
 -   `connectedCallback()`: 当自定义元素首次插入文档`DOM`🌲 时调用
 -   `disconnectedCallback()`：当自定义元素从文档`DOM`🌲 中被移除时调用(关闭浏览器或`tab`时不会调用)
--   `adoptedCallback()`：当自定义元素被移动到新的文档时，被调用(调用`document.adoptNode(el)`时触发，你这辈子都用不上)
+-   `adoptedCallback()`：当自定义元素被移动到新的文档时，被调用(调用[`document.adoptNode(el)`](https://developer.mozilla.org/zh-CN/docs/Web/API/Document/adoptNode)时触发，你这辈子都用不上)
 -   `attributeChangedCallback(attribute, oldVal, newVal)`：当自定义元素的属性发生变动时调用(仅对正在进行监听的属性生效)
 
 通常来说，组件的设置应该推迟到`connectedCallback()`中进行，因为在构造函数执行时相关的元素、属性还未创建。在构造函数中，我们应该只对该组件的一些状态栈与`ShadowDOM`进行初始化。
@@ -427,7 +428,115 @@ slot.addEventListener('slotchange', e => {
 
 ## 页面组件例子
 
-下面的例子结合三种套件实现一个`WEB`组件
+下面的例子结合三种套件实现一个`WEB`组件。这里我们写一个状态管理型的对话框组件。
+
+首先确认模板，我们通过`visible`属性来确定组件的显示与隐藏，通过插槽来确认组件内容，`title`属性来确定对话框的名称:
+
+```html
+<my-modal visible="true" title="一个对话框">
+    <div class="modal__slot">我是其中的内容哈</div>
+</my-modal>
+<template id="modal">
+    <div class="modal-container">
+        <div class="modal">
+            <div class="modal-title">
+                <span class="modal-title-text"></span>
+                <span class="modal__close-btn">×</span>
+            </div>
+            <div class="modal-content">
+                <slot></slot>
+            </div>
+        </div>
+    </div>
+</template>
+```
+
+这里我们预留了一个内容插槽，之后我们开始注册该元素，按照约定，我们在构造函数中初始化状态，并创建对话框的`ShadowDOM`：
+
+```js
+customElements.define(
+    'my-modal',
+
+    class extends HTMLElement {
+        static get observedAttributes() {
+            return ['visible', 'title']
+        }
+
+        constructor() {
+            super()
+            this.attachShadow({ mode: 'open' }).appendChild(
+                document.querySelector('#modal').content.cloneNode(true)
+            )
+
+            this._state = {
+                visible: false,
+                title: '',
+                mounted: false
+            }
+        }
+)
+```
+
+当元素正式插入`DOM`后，我们对定义在组件上的属性进行处理初始化:
+
+```js
+connectedCallback() {
+    // 注册关闭事件
+    this.shadowRoot
+        .querySelector('.modal__close-btn')
+        .addEventListener('click', () => {
+            this.setAttribute('visible', false)
+        })
+    this.titleEle = this.shadowRoot.querySelector('.modal-title-text')
+
+    this.modalEle = this.shadowRoot.querySelector('.modal-container')
+
+    this._state.mounted = true
+
+    // 同步目前组件上的属性
+    this.attributeChangedCallback('visible', null, this.getAttribute('visible'))
+    this.attributeChangedCallback('title', null, this.getAttribute('title'))
+}
+```
+
+由于`attributeChangedCallback()`生命周期会早于`DOM`调用，所以这里我们用`mounted`属性来确认`DOM`是否挂载。
+
+最后我们对属性变更进行追踪，保持更新：
+
+```js
+attributeChangedCallback(attr, oldVal, newVal) {
+    if (!this._state.mounted) return
+
+    switch (attr) {
+        case 'title':
+            this.titleEle.textContent = newVal
+            this._state[attr] = newVal
+            break
+        case 'visible':
+            this.modalEle.style.display = JSON.parse(newVal)
+                ? 'inline-block'
+                : 'none'
+            this._state[attr] = !!JSON.parse(newVal)
+            break
+        default:
+            break
+    }
+}
+```
+
+一个对话框组件就完成了，完整的例子查看[my-dialog](./exa.html)
+
+## 简结
+
+总体来说`Web Components`已经形成了一定的规范，相比以往来说，更容易对代码进行复用，而且大家不用去依赖单独的框架，开箱即用，而且`Web Component`是封装好且无污染的。但经过亲自开发后来说，我觉得还有以下问题还是需要一些工具的支持：
+
+1. 组件属性状态管理(需要手动维护状态)
+2. 组件内外数据传输(目前基于字符串传输)
+3. 组件代码文件化划分，类似于`Vue`单文件式的(干净、美观)
+
+这里推荐一个库[`Polymer`](https://polymer-library.polymer-project.org/3.0/docs/devguide/feature-overview)，它能帮我类似`React`的处理好上述的问题
+
+上面提到了自定义事件如果你想了解可以前往[自定义事件(DOM 模拟事件)](../../事件/模拟事件/README.md)
 
 Reference
 

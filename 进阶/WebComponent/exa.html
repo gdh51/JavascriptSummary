@@ -2,15 +2,176 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Web Component</title>
+        <title>Dialog</title>
         <style>
-            custom-square {
-                margin: 20px;
+            .modal__slot {
+                height: 200px;
             }
         </style>
     </head>
     <body>
-        <template> </template>
-        <script src="main.js"></script>
+        <span class="show-btn">点我显示弹框</span>
+        <my-modal visible="true" title="一个对话框">
+            <div class="modal__slot">我是其中的内容哈</div>
+        </my-modal>
+        <template id="modal">
+            <style>
+                .modal-container {
+                    position: fixed;
+                    left: 0;
+                    right: 0;
+                    top: 0;
+                    bottom: 0;
+                    text-align: center;
+                    background-color: rgba(0, 0, 0, 0.6);
+                }
+
+                .modal-container::after {
+                    content: '';
+                    display: inline-block;
+                    height: 100%;
+                    vertical-align: middle;
+                }
+
+                .modal-container .modal {
+                    display: inline-block;
+                    width: 60vw;
+                    border-radius: 5px;
+                    text-align: left;
+                    vertical-align: middle;
+                    background-color: #fff;
+                }
+
+                .modal .modal-title {
+                    position: relative;
+                    width: 100%;
+                    height: 40px;
+                    border-bottom: 2px dashed #6c6c6c;
+                }
+
+                .modal .modal-title .modal-title-text {
+                    padding-left: 16px;
+                    font-size: 20px;
+                    font-weight: 600;
+                    line-height: 40px;
+                }
+
+                .modal .modal-title .modal__close-btn {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    right: 16px;
+                    transform: translateY(-25%);
+                    font-size: 40px;
+                    cursor: pointer;
+                    user-select: none;
+                    color: #666;
+                    transition: color 0.3s ease;
+                }
+
+                .modal .modal-title .modal__close-btn:hover {
+                    color: rgb(194, 187, 187);
+                }
+
+                .modal .modal-content {
+                    padding: 16px;
+                }
+            </style>
+            <div class="modal-container">
+                <div class="modal">
+                    <div class="modal-title">
+                        <span class="modal-title-text"></span>
+                        <span class="modal__close-btn">×</span>
+                    </div>
+                    <div class="modal-content">
+                        <slot></slot>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <script>
+            // 为外部按钮添加显示对话框的功能
+            document
+                .querySelector('.show-btn')
+                .addEventListener('click', () =>
+                    document
+                        .querySelector('my-modal')
+                        .setAttribute('visible', true)
+                )
+
+            customElements.define(
+                'my-modal',
+
+                class extends HTMLElement {
+                    static get observedAttributes() {
+                        return ['visible', 'title']
+                    }
+
+                    constructor() {
+                        super()
+                        this.attachShadow({ mode: 'open' }).appendChild(
+                            document
+                                .querySelector('#modal')
+                                .content.cloneNode(true)
+                        )
+
+                        this._state = {
+                            visible: false,
+                            title: '',
+                            mounted: false
+                        }
+                    }
+
+                    connectedCallback() {
+                        // 注册关闭事件
+                        this.shadowRoot
+                            .querySelector('.modal__close-btn')
+                            .addEventListener('click', () => {
+                                this.setAttribute('visible', false)
+                            })
+                        this.titleEle = this.shadowRoot.querySelector(
+                            '.modal-title-text'
+                        )
+
+                        this.modalEle = this.shadowRoot.querySelector(
+                            '.modal-container'
+                        )
+
+                        this._state.mounted = true
+
+                        // 同步目前组件上的属性
+                        this.attributeChangedCallback(
+                            'visible',
+                            null,
+                            this.getAttribute('visible')
+                        )
+                        this.attributeChangedCallback(
+                            'title',
+                            null,
+                            this.getAttribute('title')
+                        )
+                    }
+
+                    attributeChangedCallback(attr, oldVal, newVal) {
+                        if (!this._state.mounted) return
+
+                        switch (attr) {
+                            case 'title':
+                                this.titleEle.textContent = newVal
+                                this._state[attr] = newVal
+                                break
+                            case 'visible':
+                                this.modalEle.style.display = JSON.parse(newVal)
+                                    ? 'inline-block'
+                                    : 'none'
+                                this._state[attr] = !!JSON.parse(newVal)
+                                break
+                            default:
+                                break
+                        }
+                    }
+                }
+            )
+        </script>
     </body>
 </html>
