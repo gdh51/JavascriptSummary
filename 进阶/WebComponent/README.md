@@ -252,7 +252,7 @@ customElements.define(
 )
 ```
 
-注意事件的订阅一定要先于元素的注册，不然无法生效。但是如果一个在`ShadowDOM`中的节点想要抛出时间并冒泡到外层`DOM`则需要在创建自定义事件时标记`composed: true`，该属性就表示事[件是否能穿透`ShadowDOM`](https://developer.mozilla.org/zh-CN/docs/Web/API/Event)：
+注意事件的订阅一定要先于元素的注册，不然无法生效，因为上述代码是一个**同步**的过程。但是如果一个在`ShadowDOM`中的节点想要抛出时间并冒泡到外层`DOM`则需要在创建自定义事件时标记`composed: true`，该属性就表示事[件是否能穿透`ShadowDOM`](https://developer.mozilla.org/zh-CN/docs/Web/API/Event)：
 
 ```js
 this.shadowRoot.querySelector('p').dispatchEvent(
@@ -544,3 +544,4 @@ Reference
 2. [Open vs. Closed Shadow DOM](https://blog.revillweb.com/open-vs-closed-shadow-dom-9f3d7427d1af)
 3. [Web Components will replace your frontend framework](https://blog.usejournal.com/web-components-will-replace-your-frontend-framework-3b17a580831c)
 4. [MDN Event](https://developer.mozilla.org/zh-CN/docs/Web/API/Event)
+5. [W3C WebComponents](https://github.com/WICG/webcomponents)
