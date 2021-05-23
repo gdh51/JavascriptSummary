@@ -10,11 +10,43 @@ class EasyIDB {
     }
 
     createStore(name, options) {
-        const i = this.db.createObjectStore(name, options)
-        console.log(i)
+        return new EasyStore(this.db.createObjectStore(name, options))
+    }
+
+    useStore(name, mode = 'readwrite') {
+        // 查询当前的store
+        return new EasyStore(this.db.transaction(name, mode).objectStore(name))
     }
 }
 
+class EasyStore {
+    constructor(store) {
+        this.store = store
+        this.queue = []
+    }
+
+    add(value) {
+        return wrapPromise((resolve, reject) => {
+            const request = this.store.add(value)
+
+            // source为该Store
+            request.onsuccess = () => resolve(this)
+            request.onerror = e => reject(e)
+        })
+    }
+
+    put(value, key) {
+        return wrapPromise((resolve, reject) => {
+            const request = this.store.put(value, key)
+
+            request.onsuccess = ({ target: { result } }) =>
+                resolve(new EasyIDB(result), request)
+            request.onerror = e => reject(e)
+        })
+    }
+}
+
+// 赋予cb操作Promise能力
 function wrapPromise(cb) {
     const p = new Promise((resolve, reject) => cb(resolve, reject))
     return p

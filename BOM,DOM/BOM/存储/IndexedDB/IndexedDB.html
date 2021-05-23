@@ -8,15 +8,41 @@
         <script src="easy-idb.js"></script>
     </head>
     <body>
+        <div id="idb">正在链接数据库...</div>
+        <label>
+            创建一个名为
+            <input type="text" value="" id="store" />
+            的Store
+        </label>
+        <button type="button" id="create-store">确定</button>
         <script>
-            open('my', 2, {
-                upgrade: db =>
-                    db.createStore('test', {
-                        keyPath: 'x'
-                    })
+            const IDB_NAME = 'my-idb',
+             idb = document.querySelector('#idb')
+            let IDB_VERSION = 1
+
+            open(IDB_NAME, IDB_VERSION).then(() => {
+                idb.textContent = `数据库已自动连接, 当前数据库名为${IDB_NAME}，版本为${IDB_VERSION}`
             })
-                .then(db => {})
-                .catch(e => console.log(e))
+
+            const storeBtn = document.querySelector('#create-store'),
+                storeVal = document.querySelector('#store')
+
+            storeBtn.addEventListener('click', createStore)
+
+            // 创建新的store
+            async function createStore() {
+                const db = await open(IDB_NAME, ++IDB_VERSION, {
+                    upgrade(db) {
+                        idb.textContent = `当前已创建Store，Store的创建仅能在数据库升级中执行。所以当前数据库版本为${IDB_VERSION}`
+                        db.createStore(storeVal.value)
+                    }
+                })
+
+                // 查询当前命名空间
+                const store = db.useStore(storeVal.value)
+                store.put(1, 'x')
+                store.put(1)
+            }
         </script>
     </body>
 </html>
