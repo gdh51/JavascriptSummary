@@ -17,7 +17,7 @@
         <button type="button" id="create-store">确定</button>
         <script>
             const IDB_NAME = 'my-idb',
-             idb = document.querySelector('#idb')
+                idb = document.querySelector('#idb')
             let IDB_VERSION = 1
 
             open(IDB_NAME, IDB_VERSION).then(() => {
@@ -34,14 +34,18 @@
                 const db = await open(IDB_NAME, ++IDB_VERSION, {
                     upgrade(db) {
                         idb.textContent = `当前已创建Store，Store的创建仅能在数据库升级中执行。所以当前数据库版本为${IDB_VERSION}`
-                        db.createStore(storeVal.value)
+                        db.createStore(storeVal.value, { keyPath: ['x', 'y'] })
                     }
                 })
 
                 // 查询当前命名空间
                 const store = db.useStore(storeVal.value)
-                store.put(1, 'x')
-                store.put(1)
+                // 生成 x: 1 
+                await store.add({
+                    x: 1,
+                    y: 2
+                })
+                store.store.delete([1, 2])
             }
         </script>
     </body>

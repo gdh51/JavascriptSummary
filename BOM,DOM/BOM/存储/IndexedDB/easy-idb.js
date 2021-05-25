@@ -25,9 +25,9 @@ class EasyStore {
         this.queue = []
     }
 
-    add(value) {
+    add(value, key) {
         return wrapPromise((resolve, reject) => {
-            const request = this.store.add(value)
+            const request = this.store.add(value, key)
 
             // source为该Store
             request.onsuccess = () => resolve(this)
