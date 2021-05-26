@@ -180,9 +180,12 @@ store.add({ b: 1 })
 同理，在同时指定`keyPath`时，其也可以不用指定其键值，其会按有序数列自动生成。
 
 ```js
-const store = database.createObjectStore('my-idb', { keyPath: 'x', autoIncrement: true })
+const store = database.createObjectStore('my-idb', {
+    keyPath: 'x',
+    autoIncrement: true
+})
 
-// 生成 x: 1 
+// 生成 x: 1
 store.add({ a: 1 })
 
 // 生成  x: 3
@@ -214,8 +217,8 @@ keyPath|autoIncrement|描述
 
 使用该方法时必须指定操作的命名空间的名称(可以用数组指定多个)，还可指定操作模式(只读`readonly`或读写`readwrite`)。调用后会返回一个事务对象(`IDBTransaction`)。
 
->实际上该函数还有第三个参数，用于权衡数据库操作的质量与速度，详细可以参考[IDBDatabase.transaction()
-](https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase/transaction)
+> 实际上该函数还有第三个参数，用于权衡数据库操作的质量与速度，详细可以参考[IDBDatabase.transaction()
+> ](https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase/transaction)
 
 下面创建一个事务
 
@@ -266,7 +269,7 @@ const store = db.createObjectStore('my-store', { keyPath: ['x', 'y'] })
 
 // 省略操作事务访问存储空间步骤
 // 写入数据
-store.add({ x:1, y: 2 })
+store.add({ x: 1, y: 2 })
 
 // 假设行为是同步的
 // 删除时，我们需要按keyPath顺序加值来删除，就像路径一样
@@ -277,14 +280,14 @@ store.add({ x: 'x', y: 'y' })
 store.delete(['x', 'y']) // 删除成功
 ```
 
-删除一个未指定`keyPath`的数据只需要指定其`key`即可，就像删除对象的某个键一样。
+删除一个未指定`keyPath`的数据只需要指定其`key`即可，就像删除对象的某个键一样。(**注意删除具有多个`keyPath`的值时，需要指定每个`keyPath`的值**)
 
 ```js
 const store = db.createObjectStore('my-store')
 
 // 省略操作事务访问存储空间步骤
 // 写入数据
-store.add({ x:1, y: 2 }, 'x')
+store.add({ x: 1, y: 2 }, 'x')
 
 // 删除成功
 store.delete('x')
@@ -296,9 +299,7 @@ store.delete('x')
 
 ### 读取对象存储空间的数据
 
-读取操作稍微复杂一点，因为我们要获取其读取的结果，同样的其调用`IDBObjectStore
-.get()`方法来读取数据，用法和`IDBObjectStore.delete()
-`一样(说明就在上面一点点，我这里就不重复了)
+读取操作稍微复杂一点，因为我们要获取其读取的结果，同样的其调用`IDBObjectStore .get()`方法来读取数据，用法和`IDBObjectStore.delete()`一样(说明就在上面一点点，我这里就不重复了)
 
 ```js
 database.createObjectStore('users', { keyPath: 'x' })
@@ -313,15 +314,119 @@ request.onsuccess = ({ result }) => {
 }
 ```
 
-TODO
+#### 通过索引查找
 
-另一种查找的方法通过存储空间的`index()`方法来进行查找,该方法接收一个参数,表示要查找的索引
+除了直接通过键查找外，对象存储空间还可以通过索引来进行查找。
+
+在查找之前，我们需要在**数据库版本升迁阶段**就为其创建好对应的索引，此时我们才可以在事务操作中进行查找。
 
 ```js
-var res1 = database.transaction('users', 'readwrite')
-var res2 = res1.objectStore('users')
-res2.index('name1') //查找索引为name1的键值对
+request.onupgradeneeded = function ({ target: { result: database } }) {
+    // 现在你可以创建该数据库的对象存储空间和索引
+
+    // 创建了一个名为users的对象存储空间
+    const store = database.createObjectStore('users')
+
+    // 又为该store创建了一个名为my-index的索引，当前索引会收集键名(对象时为键值)为x的数据
+    store.createIndex('my-index', 'x')
+}
 ```
+
+上述代码通过，`IDBObjectStore.createIndex(name, indexName, { unique?, multiEntry? })`创建了一个名为`my-index`的索引，该函数可以传入三个参数，第一个表示创建的索引名称，第二个表示收集的数据的键名(指定`keyPath`时则为其`keyPath`的键值，可以为数组)，第三个参数为一个可选的配置对象，其中`unique`表示是否允许收集的键值重复；`multiEntry`表示当我们指定的`keyPath`为一个数组时，是否为其每个数组元素都创建一条索引数据。
+
+[MDN IDBIndex](https://developer.mozilla.org/en-US/docs/Web/API/IDBIndex/multiEntry)
+[IndexedDB: MultiEntry Explained](https://dzone.com/articles/indexeddb-multientry-explained)
+
+创建后返回一个`IDBIndex`对象，结构如下，就包含一些创建时的信息:
+
+![create a index](../imgs/create%20a%20index.jpg)
+
+现在根据上面的索引，我们插入两条数据：
+
+```js
+// 省略了操作事务的过程
+store.add(
+    {
+        x: 1,
+        y: 2,
+        a: 3
+    },
+    'x'
+)
+store.add(1, 'y')
+```
+
+那么在浏览器控制台中可以看到这样的效果：
+
+![my-index's store](../imgs/my-index's%20store.png)
+![my-index](../imgs/my-index.jpg)
+
+下面我用一个例子来解释`multiEntry`(`unique`就不用解释了，就是是否允许索引字段值重复):
+
+```js
+// 假设创建一个如下的store
+const store = database.createObjectStore('xxx', { keyPath: 'x' })
+
+// 指定其有多入口
+store.createIndex('my-index', 'x', { multiEntry: true })
+
+// 随后我们在事务中插入这样两条数据
+store.add({
+    x: [1, 2, 3],
+    y: 2,
+    a: 3
+})
+store.add({
+    x: 2,
+    y: 3,
+    a: 4
+})
+```
+
+那么上述代码会产生如下的索引数据
+
+![use multiEntry](../imgs/use%20multiEntry.png)
+
+若我们不指定`multiEntry`那么它产生的索引数据为:
+
+![use no multiEntry](../imgs/use%20no%20multiEntry.png)
+
+可以看到其相对于解构了`keyPath`为数组的值。
+
+当然我们可以指定一个将第二个参数指定为包含多个键名的数组:
+
+```js
+// 假设创建一个如下的store
+const store = database.createObjectStore('xxx', { keyPath: 'x' })
+
+// 指定其有多入口
+store.createIndex('my-index', ['y', 'z'])
+
+// 随后我们在事务中插入这样两条数据
+store.add({
+    x: [1, 2, 3],
+    y: 2,
+    z: 3
+})
+store.add({
+    x: 2,
+    y: 3,
+    z: 4
+})
+```
+
+那么其会将产生以下效果:
+
+![multiKey index](../imgs/multiKey%20index.png)
+
+注意此时不能指定`multiEntry`属性，否则会报错，数组形式的索引`key`不能与其共同使用。(不然就处理起来就复杂了)
+
+咳咳，终于进入正题了，现在我们就用创建的索引来查找数据。由于我们基本上不会在数据库升迁事件中来查找数据
+，所以第一步我们需要找到我们在之前创建的索引：`IDBObjectStore.index()`方法，该方法接收一个参数，表示要查找的索引的名称，返回一个`IDBIndex`索引对象。
+
+找到我们的索引对象后
+
+TODO
 
 ### 利用游标遍历并操作表格
 

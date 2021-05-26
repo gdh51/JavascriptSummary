@@ -34,18 +34,28 @@
                 const db = await open(IDB_NAME, ++IDB_VERSION, {
                     upgrade(db) {
                         idb.textContent = `当前已创建Store，Store的创建仅能在数据库升级中执行。所以当前数据库版本为${IDB_VERSION}`
-                        db.createStore(storeVal.value, { keyPath: ['x', 'y'] })
+                        const store = db.createStore(storeVal.value, {
+                            keyPath: 'x'
+                        })
+                        store.createIndex('my-index', ['y', 'z'], {
+                            multiEntry: true
+                        })
                     }
                 })
 
                 // 查询当前命名空间
                 const store = db.useStore(storeVal.value)
-                // 生成 x: 1 
+                // 生成 x: 1
                 await store.add({
-                    x: 1,
-                    y: 2
+                    x: [1, 2, 3],
+                    y: 2,
+                    z: 3
                 })
-                store.store.delete([1, 2])
+                await store.add({
+                    x: 2,
+                    y: 3,
+                    z: 4
+                })
             }
         </script>
     </body>

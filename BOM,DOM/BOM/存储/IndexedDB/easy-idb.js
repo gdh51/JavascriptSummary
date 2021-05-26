@@ -44,6 +44,20 @@ class EasyStore {
             request.onerror = e => reject(e)
         })
     }
+
+    get(key) {
+        return wrapPromise((resolve, reject) => {
+            const request = this.store.get(key)
+
+            request.onsuccess = ({ target: { result } }) => resolve(result)
+
+            request.onerror = e => reject(e)
+        })
+    }
+
+    createIndex(...args) {
+        return this.store.createIndex(...args)
+    }
 }
 
 // 赋予cb操作Promise能力
