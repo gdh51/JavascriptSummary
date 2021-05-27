@@ -37,24 +37,37 @@
                         const store = db.createStore(storeVal.value, {
                             keyPath: 'x'
                         })
-                        store.createIndex('my-index', ['y', 'z'], {
-                            multiEntry: true
-                        })
+                        store.createIndex('my-index', 'y')
+                    },
+
+                    blocking(e) {
+                        console.log(e)
+                        alert('?')
+                    },
+
+                    versionchange(e) {
+                        console.log(e)
                     }
                 })
 
                 // 查询当前命名空间
                 const store = db.useStore(storeVal.value)
-                // 生成 x: 1
+
                 await store.add({
-                    x: [1, 2, 3],
-                    y: 2,
-                    z: 3
+                    x: 1,
+                    y: 1
                 })
                 await store.add({
                     x: 2,
-                    y: 3,
-                    z: 4
+                    y: 1
+                })
+                await store.add({
+                    x: 3,
+                    y: 2
+                })
+                await store.add({
+                    x: 4,
+                    y: 3
                 })
             }
         </script>
