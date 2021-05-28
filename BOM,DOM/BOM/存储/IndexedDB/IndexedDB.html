@@ -18,9 +18,24 @@
         <script>
             const IDB_NAME = 'my-idb',
                 idb = document.querySelector('#idb')
-            let IDB_VERSION = 1
+            let IDB_VERSION = 7
 
-            open(IDB_NAME, IDB_VERSION).then(() => {
+            open(IDB_NAME, IDB_VERSION, {
+                upgrade(db) {
+                    idb.textContent = `当前已创建Store，Store的创建仅能在数据库升级中执行。所以当前数据库版本为${IDB_VERSION}`
+                    // const store = db.createStore('xxx', {
+                    //     keyPath: 'x'
+                    // })
+                    // store.createIndex('my-index', 'y')
+                },
+                blocking(e) {
+                    console.log(e)
+                },
+
+                versionchange(e) {
+                    console.log(e)
+                }
+            }).then(() => {
                 idb.textContent = `数据库已自动连接, 当前数据库名为${IDB_NAME}，版本为${IDB_VERSION}`
             })
 
@@ -31,24 +46,7 @@
 
             // 创建新的store
             async function createStore() {
-                const db = await open(IDB_NAME, ++IDB_VERSION, {
-                    upgrade(db) {
-                        idb.textContent = `当前已创建Store，Store的创建仅能在数据库升级中执行。所以当前数据库版本为${IDB_VERSION}`
-                        const store = db.createStore(storeVal.value, {
-                            keyPath: 'x'
-                        })
-                        store.createIndex('my-index', 'y')
-                    },
-
-                    blocking(e) {
-                        console.log(e)
-                        alert('?')
-                    },
-
-                    versionchange(e) {
-                        console.log(e)
-                    }
-                })
+                const db = await open(IDB_NAME)
 
                 // 查询当前命名空间
                 const store = db.useStore(storeVal.value)

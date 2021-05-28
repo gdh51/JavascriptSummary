@@ -1,5 +1,11 @@
 # IndexedDB - Indexed Database
 
+`IndexedDB`在很久以前就已经存在了，但由于其较为底层和兼容性问题，最近才慢慢被人们开始使用。相当于常规的`Web Storage`来说，它的存储容量更大(前者`5MB`)且存储和查询功能更完善。它是一个面向对象数据库，一个数据库中所有的数据以对象存储空间的形式存在(常规的为表)，并且它存储的数据是`Javascript`原生类型数据，并且还可以存储`Blob`类型数据。一般来说，它常被用于一些离线存储来使用。
+
+> [`Indexed Database API 3.0`草案](https://www.w3.org/TR/IndexedDB/#accessibility)已经发布了
+
+## 从控制台查看数据库
+
 当我们打开浏览器控制台的`Application - Storage(Chrome)/Storage(Firefox)`选项时，我们可以从存储类型中看到一个名为`IndexedDB`的选项。点击后我们可以看到一个类似表格的数据信息，这就是`IndexedDB`。
 
 > 当我们打开控制台的对应表格时，查看的是当时生成的一个快照。`IndexedDB`是浏览器中保存结构化数据的一种数据库。（为了兼容最好使用浏览器前缀）。以前，`IE10`中为`msIndexedDB`，`Firefox`中为`mozIndexedDB`，`Chrome`中为`webkitIndexedDB`
@@ -770,32 +776,39 @@ index.getAll(range)
 
 [MDN IDBKeyRange](https://developer.mozilla.org/zh-CN/docs/Web/API/IDBKeyRange)
 
-## 其他问题
+## 实际应用中的问题
 
 ### 多页面并发问题
 
-`IndexedDB`提供的是请求式的异步`API`，所以有时会存在并发问题，当两个不同的标签页打开了同一个页面，且一个页面试图更新一个更高级版本的数据库时就会发生冲突。
+`IndexedDB`提供的是请求式的异步`API`，所以有时会存在并发问题，当两个不同的标签页打开了同一个页面，且一个页面试图更新一个更高级版本的数据库时就会发生冲突，合适的处理这个问题非常重要。
 
-处理这个问题就是刚打开数据库时，记得指定`onversionchange`事件，并在事件中关闭数据库。调用[`IDBDatabase.close()`](https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase/close)方法将当前的数据库关闭(数据库不会立即关闭，会执行完当前的事务)。并通过订阅`onblocked`事件(该事件即有比当前版本更高的数据库发布时触发)，此时最好通知用户关闭其他低版本数据库的标签页。
+一般来说版本的升迁标志着整个页面的重新发布，此时如果用户仍有老页面存活，那么更高级版本页面的`IndexedDB`就会触发[`blocked`](https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onblocked)事件阻止本次版本升迁。所以通过订阅该事件来通知用户关闭老页面然后在重载当前页面这才是一个合理的处理。对于老页面，如果有其他页面在升迁更高级的数据库，那么会放出`versionchange`事件，此时你需要在事件中关闭数据库(调用[`IDBDatabase.close()`](https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase/close)方法将当前的数据库关闭，数据库不会立即关闭，会执行完当前的事务)，并通知用户重新加载该页码。
 
 ```js
 const request = indexedDB.open('xxx', 1)
 
+// 在打开数据库时，订阅该事件，好在以上情况时通知用户
 request.onblocked = () => {
     // 通知用户关闭
 }
 
 request.onsuccess = ({ target: { result: database } }) => {
-    // 关闭数据库
-    database.onversionchange = () => database.close()
+    // 当前网页的其他标签页在升迁数据库版本时，关闭当前页面的数据库，提示用户刷新
+    database.onversionchange = () => {
+        database.close()
+
+        // ...提示用户
+    }
 }
 ```
 
 ### 同步化操作
 
-底层的`IndexedDB API`基本上是基于异步实现的，在实际代码书写中非常难看且不便于阅读，你可以动手将其改造为`Promise`版本，你可以查看我的[简单改造版本](./easy-idb.js)，当然我还是推荐一个比较成熟的库—[idb](https://www.npmjs.com/package/idb)，它的用法基本上与原来一致，所以你必须要懂`IndexedDB`的操作！
+底层的`IndexedDB API`基本上是基于异步实现的，在实际代码书写中非常难看且不便于阅读，你可以动手将其改造为`Promise`版本，你可以查看我的[简单改造版本](./easy-idb.js)，当然我还是推荐一个比较成熟的库—[idb](https://www.npmjs.com/package/idb)，它的用法基本上与原来一致，所以你必须要懂`IndexedDB`的操作！或者一个更简洁的版本—[idb-keyval](https://www.npmjs.com/package/idb-keyval)
 
-### 在另一个线程中使用
+### 在另一个线程中使用(Work with Worker)
+
+`indexedDB`除了在常规线程使用之外还可以在单独的`Web Worker`线程中使用，进行独立运算，不会阻塞主线程的操作。
 
 ---
 
