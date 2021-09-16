@@ -8,18 +8,16 @@
 </head>
 
 <body>
-    <button id="create">添加</button>
+    <button id="create">创建一个闭包</button>
     <script>
         var detachedNodes;
 
         function createLargeClosure() {
             var largeStr = new Array(1000000).join('x');
 
-            detachedNodes = function () { // this IS a named function
+            detachedNodes = function lC() { // this IS a named function
                 return largeStr;
-            };
-
-
+            }
         }
         document.getElementById('create').addEventListener('click', createLargeClosure);
     </script>
