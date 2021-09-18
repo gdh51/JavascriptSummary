@@ -22,39 +22,39 @@
 
 环境记录是一个抽象结构，它具有三个实际的子类，而其中一个子类还具有两个子类型，它们的结构如下：
 
-- 声明环境记录`declarative Environment Record`：它与`ECMAScript`的作用域关联，包含`var/constant/let/class/module/import/function`声明，它将标识符与这些声明在这个作用域中进行关联。
-  - 函数环境记录`function Environment Record`：函数环境对象对应`ECMAScript`中函数的调用，同时包含函数内的顶级声明。它可能会创建一个`this`绑定(箭头函数不会)。
-  - 模块环境记录`module Environment Record`：它记录着模块中的顶级声明，同时包含导入`import`的模块。其`[[OuterEnv]]`为全局环境记录。
-- 对象环境记录`object Environment Record`：用于联系标识符与对象属性的绑定，比如`with`语句声明(`WithStatement`)。
-- 全局环境记录`global Environment Record`：即用于全局声明，它的`[[OuterEnv]]`为`null`。它通过全局环境记录上的标识符来与全局对象保持联系。
+-   声明环境记录`declarative Environment Record`：它与`ECMAScript`的作用域关联，包含`var/constant/let/class/module/import/function`声明，它将标识符与这些声明在这个作用域中进行关联。
+    -   函数环境记录`function Environment Record`：函数环境对象对应`ECMAScript`中函数的调用，同时包含函数内的顶级声明。它可能会创建一个`this`绑定(箭头函数不会)。
+    -   模块环境记录`module Environment Record`：它记录着模块中的顶级声明，同时包含导入`import`的模块。其`[[OuterEnv]]`为全局环境记录。
+-   对象环境记录`object Environment Record`：用于联系标识符与对象属性的绑定，比如`with`语句声明(`WithStatement`)。
+-   全局环境记录`global Environment Record`：即用于全局声明，它的`[[OuterEnv]]`为`null`。它通过全局环境记录上的标识符来与全局对象保持联系。
 
 ## 执行上下文
 
 执行上下文是*ECMAScript*代码**被解析和执行时所在环境**的抽象概念。一个执行上下文**至少**有以下列表中`4`个状态组件：
 
-组件|作用
--|-
-代码计算状态(`code evaluation state`)|执行、挂起和恢复与此执行上下文关联的代码的计算所需的任何状态。
-函数(`Function`)|如果当前计算的代码为函数调用，那么函数组件值就为这个函数对象；如果当前在计算的代码为脚本或模块，则其为`null`
-领域(`Realm`)|关联`ECMAScript`资源
-脚本或模块(`ScriptOrModule`)|当前代码的来源，没有时为`null`
+| 组件                                  | 作用                                                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 代码计算状态(`code evaluation state`) | 执行、挂起和恢复与此执行上下文关联的代码的计算所需的任何状态。                                               |
+| 函数(`Function`)                      | 如果当前计算的代码为函数调用，那么函数组件值就为这个函数对象；如果当前在计算的代码为脚本或模块，则其为`null` |
+| 领域(`Realm`)                         | 关联`ECMAScript`资源                                                                                         |
+| 脚本或模块(`ScriptOrModule`)          | 当前代码的来源，没有时为`null`                                                                               |
 
->上述4个组件和代码位置信息、加载资源信息、执行信息等等有关
+> 上述 4 个组件和代码位置信息、加载资源信息、执行信息等等有关
 
 对于`ECMAScript`代码所创建的执行上下文，它还具有两个额外的状态组件：
 
-组件|作用
--|-
-词法环境(`LexicalEnvironment`)|标识并维护环境记录中的标识符引用。[通过`let/const`定义的变量会存储在这里。](https://262.ecma-international.org/12.0/#sec-declarations-and-the-variable-statement)
-变量环境组件(`VariableEnvironment`)|标识并维护环境记录中的变量声明(*VariableStatement*)，即通过`var`声明的变量
+| 组件                                | 作用                                                                                                                                                              |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 词法环境(`LexicalEnvironment`)      | 标识并维护环境记录中的标识符引用。[通过`let/const`定义的变量会存储在这里。](https://262.ecma-international.org/12.0/#sec-declarations-and-the-variable-statement) |
+| 变量环境组件(`VariableEnvironment`) | 标识并维护环境记录中的变量声明(_VariableStatement_)，即通过`var`声明的变量                                                                                        |
 
 **词法环境组件和变量环境组件都是环境记录**。词法环境组件
 
->这里对于`Generator`还有一个种状态组件就不列举了
+> 这里对于`Generator`还有一个种状态组件就不列举了
 
 ### 执行栈
 
-执行栈(*execution context stack*)也称为调用栈，具有**栈**结构(先进先出)，用于存储在代码执行期间创建的所有执行上下文。
+执行栈(_execution context stack_)也称为调用栈，具有**栈**结构(先进先出)，用于存储在代码执行期间创建的所有执行上下文。
 
 大致运行的过程为：首次运行*Javascript*代码时，会创建一个全局执行上下文并推入当前执行栈中。**每当函数调用，就创建一个函数执行上下文并推入当前执行栈的最顶层。每当栈顶函数运行完成后，就会把对应的函数上下文弹出当前执行栈，并将上下文控制权转交给当前执行栈的下一个执行上下文**。
 
@@ -64,18 +64,18 @@
 
 `2021`规范中关于词法环境的描述较少，仅给出刚刚的定义：
 
->Identifies the Environment Record used to resolve identifier references made by code within this execution context.
+> Identifies the Environment Record used to resolve identifier references made by code within this execution context.
 
 即用于处理执行上下文中标识符与变量引用的关系。通过对于规范文档的搜索我们还可以发现以下信息：
 
-- [词法环境中绑定有`this`标识符](https://262.ecma-international.org/12.0/#sec-getthisenvironment)
-- [通过`let/const`声明的变量是作用在词法环境中的。](https://262.ecma-international.org/12.0/#sec-declarations-and-the-variable-statement)
+-   [词法环境中绑定有`this`标识符](https://262.ecma-international.org/12.0/#sec-getthisenvironment)
+-   [通过`let/const`声明的变量是作用在词法环境中的。](https://262.ecma-international.org/12.0/#sec-declarations-and-the-variable-statement)
 
 ### 变量环境 VariableEnvironment
 
 变量环境是一种用于识别当前执行上下文中由变量声明(`VariableStatements`)创建的变量。
 
->Identifies the Environment Record that holds bindings created by VariableStatements within this execution context.
+> Identifies the Environment Record that holds bindings created by VariableStatements within this execution context.
 
 通过`var`定义的变量会作用于变量环境中。
 
@@ -112,7 +112,7 @@ test()
 
 ## 变量提升
 
-首先规范中并未有变量提升的概念。涉及到变量提升问题的变量声明有3个`var/let/const`。首先我们要明确，`var`会作用于变量环境，`let/const`会作用于词法环境。
+首先规范中并未有变量提升的概念。涉及到变量提升问题的变量声明有 3 个`var/let/const`。首先我们要明确，`var`会作用于变量环境，`let/const`会作用于词法环境。
 
 当包含`var`的变量环境实例化时，其会被初始化为`undefined`，并且对多个相同标识符的声明只会生成一个变量。当其执行对应的赋值语句时，其才会进行赋值；
 
@@ -137,7 +137,7 @@ Reference:
 
 闭包的产生是因为**词法环境**。
 
-## this绑定
+## this 绑定
 
 `ECMAScript`代码中对于`this`的访问实际上是访问当前执行上下文的环境记录中是否有`this`字段。整个访问操作实际上这样的：
 
@@ -152,6 +152,8 @@ Reference:
 ## 关于规范版本问题
 
 上述的描述都是基于`ECMAScript 2021`版本进行书写。目前流传的版本大概出于一个中间的版本，会与上述描述有一些差异。比如[`Medium`的这篇文章中词法环境由环境记录与对外部词法环境的引用组成](https://amnsingh.medium.com/lexical-environment-the-hidden-part-to-understand-closures-71d60efac0e0)；其与[BY 的前端笔记](https://www.bruceyj.com/front-end-interview-summary/front-end/JavaScript/6-environment-record.html#%E7%BB%86%E8%8A%82)的总结比较相近。
+
+这里还有一篇关于`ECMAScript 6`执行上下文与执行栈的说明[2018 - Understanding Execution Context and Execution Stack in Javascript](https://blog.bitsrc.io/understanding-execution-context-and-execution-stack-in-javascript-1c9ea8642dd0)，每篇文章中的说法都有相识点但也有不同点，大家根据情况酌情吸收。
 
 Reference:
 [ES2021 10.3 Execution Contexts](https://262.ecma-international.org/12.0/#sec-execution-contexts)
@@ -194,11 +196,11 @@ Reference:
 
 #### 垃圾回收算法
 
-- 引用计数（已不再使用）：当一个对象没有引用指向它时就在下一轮垃圾回收时清除。
+-   引用计数（已不再使用）：当一个对象没有引用指向它时就在下一轮垃圾回收时清除。
     这种算法存在的**问题就是当两个对象互相引用时，即使它们不在被使用也不会回收**(IE 还在继续使用)
-- 标记清除(常用)：标记清除将*不再使用的对象*定义为*无法到达的对象*，即从根部(在 JS 中为全局对象)出发定时扫描内存中的对象，凡是能从根部到达的对象，保留。无法到达的对象被标记为不再使用，稍后回收。
+-   标记清除(常用)：标记清除将*不再使用的对象*定义为*无法到达的对象*，即从根部(在 JS 中为全局对象)出发定时扫描内存中的对象，凡是能从根部到达的对象，保留。无法到达的对象被标记为不再使用，稍后回收。
 
-[V8引擎垃圾的垃圾回收机制详解](./浏览器内存管理/README.md)
+[V8 引擎垃圾的垃圾回收机制详解](./浏览器内存管理/README.md)
 
 #### 内存泄漏
 

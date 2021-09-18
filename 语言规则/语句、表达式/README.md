@@ -7,26 +7,26 @@
 原始表达式是表达式的最小单位——不再包含其他表达式，原始表达式包含常量、直接量、关键字和变量。
 
 ```js
-1.23;//数字直接量
-"hello"; //字符串直接量
-/pattern/g;  //正则表达式直接量
+1.23 //数字直接量
+;('hello') //字符串直接量
+;/pattern/g //正则表达式直接量
 ```
 
 保留字构成的原始表达式：
 
 ```js
-true;
-false;
-null;
-this;
+true
+false
+null
+this
 ```
 
 变量构成的原始表达式：
 
 ```js
-i;  //返回i的值
-sum;
-undefined;//全局变量，null为关键字
+i //返回i的值
+sum
+undefined //全局变量，null为关键字
 ```
 
 ## 对象和数组的初始表达式
@@ -35,15 +35,13 @@ undefined;//全局变量，null为关键字
 
 ```js
 //声明一个长度为7的数组
-var newAr = [1,,,,,,5];
+var newAr = [1, , , , , , 5]
 ```
 
-数组直接量中的列表逗号之间的元素可以省略，省略的空位会填充值`undefined`。
-
-当数组以逗号结尾时，数组会忽略该逗号
+数组直接量中的列表逗号之间的元素可以省略，省略的空位会填充值`undefined`；当数组以逗号结尾时，数组会忽略该逗号
 
 ```js
-var newAr = [1, 2,, 3,];// [1, 2, undefined, 3]
+var newAr = [1, 2, , 3] // [1, 2, undefined, 3]
 ```
 
 对象的初始化表达式同数组类似
@@ -53,40 +51,67 @@ var newAr = [1, 2,, 3,];// [1, 2, undefined, 3]
 同变量声明一样的写法
 
 ```js
-var square = function(x){ return x * x; } //一个函数表达式
+var square = function (x) {
+    return x * x
+} //一个函数表达式
 ```
 
 ## 属性访问表达式
 
-属性访问有两种方式：
+属性访问有三种方式：
 
-+ 通过需要访问的属性名称访问：这种方式不适合访问属性名为*保留字*、包含空格和标点符号，或数字(比如数组)
-  ```js
-  expression.identifier;
-  ```
-+ 通过另一个表达式来访问属性名称
-  ```js
-  expression[expression];
-  ```
+-   通过需要访问的属性名称访问：这种方式不适合访问属性名为*保留字*、包含空格和标点符号，或数字(比如数组)
+
+```js
+expression.identifier
+```
+
+-   通过选择式的属性名称访问：当前调用访问的属性或方法的对象自身为`nullish`值(`null`或`undefined`)时，其会安全的退出并返回`undefined`。(这在处理返回的数据时很有用)
+
+```js
+expression?.identifier
+```
+
+例如：
+
+```js
+const a = { b: 1 }
+a?.b // 1
+a.c?.e // undefined
+```
+
+-   通过另一个表达式来访问属性名称
+
+```js
+expression[expression]
+```
+
 如：
 
 ```js
-var o = {x: 1, y: {z: 3}};
-o.y.z; //3
-o["y"].z;//3
+var o = { x: 1, y: { z: 3 } }
+o.y.z //3
+o['y'].z //3
 ```
 
-其中的**表达式**会按从左到右依次计算。
+其中的**表达式**会按**从左到右**依次计算。
 
 ## 调用表达式
 
 一种调用函数或方法的语法表示。
 
 ```js
-f(0);//f是一个函数表达式；0是一个参数表达式
+f(0) //f是一个函数表达式；0是一个参数表达式
 ```
 
 当调用表达式求值时，首先计算函数表达式，然后计算参数表达式，得到一组参数值。如果函数使用`return`语句给出一个返回值，那么这个值就是这个表达式调用的值，否则表达式的值就为`undefined`。
+
+现在我们可以用选择访问符来调用函数方法，这样及时调用的方法在不存在时可以安全的退出：
+
+```js
+// 全局没有任何地方定义f，这里其会默默的失败
+f?.()
+```
 
 ## 对象创建表达式(实例化)
 
@@ -94,7 +119,7 @@ f(0);//f是一个函数表达式；0是一个参数表达式
 如果对象创建表达式不需要传入任何参数给构造函数，那么空圆括号可以省略。
 
 ```js
-new ObjectConstructor;//不推荐, 但等价于 new ObjectConstructor()
+new ObjectConstructor() //不推荐, 但等价于 new ObjectConstructor()
 ```
 
 **实例化过程**：当计算一个*对象创建表达式*的值时(即对一个函数调用`new`操作符)，首先创建一个新的空对象，然后通过传入指定的参数并将这个新对象当作`this`的值来调用这个指定的函数。被当作构造函数的函数*应该*不返回一个值，因为新创建并被初始化后的对象就是整个*对象创建表达式*的值；如果一个构造函数返回一个对象值，则这个对象值就会作为对象创建表达式的值；如果一个构造函数返回一个原始值，那么会忽视自定义的返回值仍返回新创建的对象。
@@ -109,12 +134,12 @@ new ObjectConstructor;//不推荐, 但等价于 new ObjectConstructor()
 如果一个函数调用了`eval()`，那么解释器将无法进一步优化，且`eval()`可以被赋予其他名字：
 
 ```js
-var f = eval;  //eval()
+var f = eval //eval()
 ```
 
 ### eval()
 
-接受一个参数，如果参数是字符串则当作Javascript代码进行编译，编译失败则抛出错误，编译成功时返回最后一个表达式或语句的值，没有值则返回`undefined`。
+接受一个参数，如果参数是字符串则当作 Javascript 代码进行编译，编译失败则抛出错误，编译成功时返回最后一个表达式或语句的值，没有值则返回`undefined`。
 如果参数不是字符串，则返回这个参数。
 
 `eval()`函数会使用**调用它**所在的变量作用域环境，即一个函数定义了一个局部变量`x`，然后调用`eval('x')`，则这个`x`来源于局部变量`x`。
@@ -123,43 +148,43 @@ var f = eval;  //eval()
 
 ```js
 var foo = function (a) {
-  eval(a);
-};
-foo("return;"); //异常 这里相当于不存在函数内
+    eval(a)
+}
+foo('return;') //异常 这里相当于不存在函数内
 ```
 
 直接调用`eval()`时，它总会在调用它的上下文作用域内执行。**其他间接调用则使用全局对象作为其上下文作用域**，并且无法读、写、定义局部变量和函数。
 
 ```js
-var geval = eval,//改名以备间接调用
-    x = "global",
-    y = "global";
+var geval = eval, //改名以备间接调用
+    x = 'global',
+    y = 'global'
 function f() {
-    var x = "local";
-    eval("x += 'changed'; ");
-    return x; //返回局部变量 localchanged
+    var x = 'local'
+    eval("x += 'changed'; ")
+    return x //返回局部变量 localchanged
 }
-f(); //localchanged
+f() //localchanged
 
 function g() {
-    var y = "local";
-    geval("y += 'changed';");//改变全局变量为globalchanged
-    return y;//返回局部变量local
+    var y = 'local'
+    geval("y += 'changed';") //改变全局变量为globalchanged
+    return y //返回局部变量local
 }
-g();// globalchanged
+g() // globalchanged
 ```
 
-（IE9之前的版本，通过别名调用`eval()`时并不是全局`eval()`，而是局部，但IE定义了一个`execScript()`来完成全局`eval()`功能，但该函数总是返回`null`）
+（IE9 之前的版本，通过别名调用`eval()`时并不是全局`eval()`，而是局部，但 IE 定义了一个`execScript()`来完成全局`eval()`功能，但该函数总是返回`null`）
 
-### 严格模式下的eval()
+### 严格模式下的 eval()
 
 当严格模式下调用，代码以`use strict`开始，`eval()`执行的代码段可以查询或更改局部变量，但*不能在局部作用域中定义新的函数或变量*(普通模式下也如此)；`eval`成为保留字，且不能用别名。
 
 ```js
-'use strict';
-(function () {
-  eval('var a = 1;');
-  return a;// 异常，a未定义
+'use strict'
+;(function () {
+    eval('var a = 1;')
+    return a // 异常，a未定义
 })()
 ```
 
@@ -173,12 +198,12 @@ g();// globalchanged
 
 用花括号将多条语句括起来可以形成一条复合语句。
 
-在ES6及其之后, 这种语法会形成一个块级作用域
+在 ES6 及其之后, 这种语法会形成一个块级作用域
 
 ```js
 {
-  var x = 5;
-  console.log(x);
+    var x = 5
+    console.log(x)
 }
 ```
 
@@ -187,15 +212,14 @@ g();// globalchanged
 下为空语句:
 
 ```js
-    ;
 //当创建一个空循环体时非常有用，比如:
-var a = [];
-for (i = 0; i < a.length; a[i++] = 0);//最好在空语句时添加注释
+var a = []
+for (i = 0; i < a.length; a[i++] = 0); //最好在空语句时添加注释
 ```
 
 ### 声明语句
 
-`var`和`function`都是声明语句，它们声明或定义变量或函数。(ES6新增`let` `const`)
+`var`和`function`都是声明语句，它们声明或定义变量或函数。(ES6 新增`let` `const`)
 
 #### var
 
@@ -206,8 +230,8 @@ for (i = 0; i < a.length; a[i++] = 0);//最好在空语句时添加注释
 函数声明语句：
 
 ```js
-function name (arg) {
-  //statements
+function name(arg) {
+    //statements
 }
 ```
 
@@ -215,8 +239,8 @@ function name (arg) {
 
 ```js
 var name = function (arg) {
-  //statements
-};
+    //statements
+}
 ```
 
 **函数表达式**会将函数**创建**与**初始化**显式的提升到脚本或函数的顶部，但值需在定义该函数变量处赋予；而**函数声明**语句会将函数**创建、初始化、赋值**都提升到整个作用域，意思是可以在声明前调用。
@@ -225,15 +249,15 @@ var name = function (arg) {
 
 ### 条件语句、循环语句
 
-#### switch语句
+#### switch 语句
 
 `break`和`return`都会终止`switch`语句，`switch`语句的条件使用的是`===`操作，不会进行类型转换。对于每一个`case`语句必须调用`break`终止`switch`语句，否则它将会沿着当前`case`语句继续向下执行。
 
 #### while、do/while、for、for/in
 
-下面介绍下JS中的一些基础表达式语句
+下面介绍下 JS 中的一些基础表达式语句
 
-##### for循环
+##### for 循环
 
 `for`语句用于创建一个循环，它包含三个可选的表达式，分别在括号中用`;`分隔，后跟一个在每次循环中执行的语句。
 
@@ -241,42 +265,40 @@ var name = function (arg) {
 
 ```js
 // []表示可选
-for ([initialization]; [condition]; [final-expression])
-   statement
+for ([initialization]; [condition]; [final - expression]) statement
 ```
 
-+ **initialization**：一个表达式(赋值表达式)或变量声明
-+ **condition**：一个条件表达式用于确认每一次循环是否执行。该表达式为可选，如果忽略，则永远视为条件为真值；当为假值时将停止执行循环
-+ **final-expression**：每次循环结束后都要执行的表达式。**执行时间在下一次`condition`计算之前**。
-+ **statement**：每次循环满足`condition`时执行的语句，使用`{...}`来包裹；没有任何语句要执行时，必须要跟一个空语句(`;`)。
+-   **initialization**：一个表达式(赋值表达式)或变量声明
+-   **condition**：一个条件表达式用于确认每一次循环是否执行。该表达式为可选，如果忽略，则永远视为条件为真值；当为假值时将停止执行循环
+-   **final-expression**：每次循环结束后都要执行的表达式。**执行时间在下一次`condition`计算之前**。
+-   **statement**：每次循环满足`condition`时执行的语句，使用`{...}`来包裹；没有任何语句要执行时，必须要跟一个空语句(`;`)。
 
 从上面我们可以知道，`for`循环中三个条件都可以忽略，但是两个分号必须有；此外，只要条件结果为真值时，就会继续循环，例如遍历链表数据结构：
 
 ```js
 // 假设o为链表
-for(;o.next;o.next) /*empty*/;
-return o;//返回最后一个对象
+for (; o.next; o.next /*empty*/);
+return o //返回最后一个对象
 ```
 
-##### for/in循环
+##### for/in 循环
 
 `for/in`循环语句同`for`循环语句，但它用于对对象的遍历，它会遍历对象的所有的可枚举的键值对(除`Symbol`)，并且**它会遍历对象的原型链上的属性**！(可枚举这个特性可以暂时忽略，之后会学习)，语法如下：
 
 ```js
-for (let variable in object)
-    statement
+for (let variable in object) statement
 ```
 
-+ `variable`：通常是一个变量名，也可以是一个可以产生左值的表达式或则一个通过`var`语句声明的变量，总之必须是一个适合用于赋值表达式左侧的值。
+-   `variable`：通常是一个变量名，也可以是一个可以产生左值的表达式或则一个通过`var`语句声明的变量，总之必须是一个适合用于赋值表达式左侧的值。
 
-### continue语句
+### continue 语句
 
 `continue`的行为在不同的循环体中有所不同：
 
-+ 在`while`循环中，在循环开始时会检查条件，为`true`时才会从头开始执行
-+ 在`do/while`循环中，程序会跳到结尾，重新检查循环条件，之后才会继续下一次循环
-+ 在`for`循环中，先检测自增表达式，然后再次测试条件，在判断是否循环。
-+ 在`for/in`循环中，直接循环下一次
+-   在`while`循环中，在循环开始时会检查条件，为`true`时才会从头开始执行
+-   在`do/while`循环中，程序会跳到结尾，重新检查循环条件，之后才会继续下一次循环
+-   在`for`循环中，先检测自增表达式，然后再次测试条件，在判断是否循环。
+-   在`for/in`循环中，直接循环下一次
 
 ### 标签语句
 
@@ -286,24 +308,24 @@ for (let variable in object)
 通过给语句定义标签，可以在程序任何地方通过标签名引用这条语句。
 `break`、`continue`是唯一可以使用语句标签的语句。（可以用来跳出多重嵌套循环的外部循环）
 
-### finally语句
+### finally 语句
 
-只要`try`语句中的代码执行了，`finally`语句就会执行。当由于`return`、`continue`、`break`语句使得解释器跳出``try``语句块时，解释器在执行新目标代码前优先执行`finally`块中的语句。如果不存在处理异常的局部`catch`从句，解释器会首先执行`finally`语句中的逻辑，然后向上传播这个异常，知道找到能处理这个异常的`catch`从句。
+只要`try`语句中的代码执行了，`finally`语句就会执行。当由于`return`、`continue`、`break`语句使得解释器跳出`try`语句块时，解释器在执行新目标代码前优先执行`finally`块中的语句。如果不存在处理异常的局部`catch`从句，解释器会首先执行`finally`语句中的逻辑，然后向上传播这个异常，知道找到能处理这个异常的`catch`从句。
 
 如果`finally`语句通过`return`、`continue`、`break`、`throw`等语句或发生了异常而改变了程序执行流程，解释器都将忽略`try`中的改变。
 
 ```js
-var foo = function(){
+var foo = function () {
     try {
-        throw new Error("1");
+        throw new Error('1')
     } finally {
-        return 1;//改写为 throw new Error("2")时
+        return 1 //改写为 throw new Error("2")时
     }
 }
-console.log(foo());//返回1    抛出2错误，没有1错误
+console.log(foo()) //返回1    抛出2错误，没有1错误
 ```
 
-### with语句
+### with 语句
 
 ```js
 with (object) {
@@ -326,7 +348,7 @@ with (object) {
 
 ```js
 with (o) {
-  x = 1;
+    x = 1
 }
 ```
 
@@ -334,8 +356,7 @@ with (o) {
 
 ```js
 function f(x, o) {
-    with (o)
-        print(x);
+    with (o) print(x)
 }
 ```
 
@@ -343,25 +364,25 @@ function f(x, o) {
 
 [了解更多](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/with)
 
-### debugger语句
+### debugger 语句
 
-这个语句用来产生一个断点，Javascript代码的执行会停止在断点的位置
+这个语句用来产生一个断点，Javascript 代码的执行会停止在断点的位置
 
 ### use strict——严格模式
 
 使用严格模式，只能出现在代码开始或函数体开始，并与普通模式有以下几点不同：
 
-+ 禁止使用`with`语句
-+ 所有变量要先声明
-+ 在严格模式下全局调用函数中的`this`为`undefined`。
-+ 通过`call()`或`apply()`调用函数时，`this`是通过`call()`或`apply()`传入的第一个参数。
-+ 在严格模式，给只读属性和不可扩展的对象创建新成员会抛出类型错误。
-+ 在严格模式，传入`eval()`的代码不能在调用程序所在的上下文中声明变量或定义函数。
-+ 严格模式中，函数的`arguments`对象拥有传入函数值的静态副本。非严格模式中，`arguments`里的数组元素和函数参数都是指向同一个值的引用。
-+ 严格模式中，`delete`运算符后跟随非法的标识符（变量、函数、函数参数）会抛出语法错误。
-+ 严格模式中，试图删除一个不可配置的属性将抛出一个类型错误。
-+ 严格模式中，在一个对象直接量中定义两个或多个同名属性将产生一个语法错误。
-+ 严格模式中，函数声明中存在两个或多个同名参数将产生语法错误。
-+ 严格模式中不允许使用八进制整数直接量（以0为前缀，而不是0x为前缀）
-+ 严格模式中，`eval`、`arguments`当做关键字，它们的值是不能更改的。
-+ 严格模式限制了调用栈的检查能力。`arguments`、`caller`和`arguments.callee`都会抛出一个类型错误异常。
+-   禁止使用`with`语句
+-   所有变量要先声明
+-   在严格模式下全局调用函数中的`this`为`undefined`。
+-   通过`call()`或`apply()`调用函数时，`this`是通过`call()`或`apply()`传入的第一个参数。
+-   在严格模式，给只读属性和不可扩展的对象创建新成员会抛出类型错误。
+-   在严格模式，传入`eval()`的代码不能在调用程序所在的上下文中声明变量或定义函数。
+-   严格模式中，函数的`arguments`对象拥有传入函数值的静态副本。非严格模式中，`arguments`里的数组元素和函数参数都是指向同一个值的引用。
+-   严格模式中，`delete`运算符后跟随非法的标识符（变量、函数、函数参数）会抛出语法错误。
+-   严格模式中，试图删除一个不可配置的属性将抛出一个类型错误。
+-   严格模式中，在一个对象直接量中定义两个或多个同名属性将产生一个语法错误。
+-   严格模式中，函数声明中存在两个或多个同名参数将产生语法错误。
+-   严格模式中不允许使用八进制整数直接量（以 0 为前缀，而不是 0x 为前缀）
+-   严格模式中，`eval`、`arguments`当做关键字，它们的值是不能更改的。
+-   严格模式限制了调用栈的检查能力。`arguments`、`caller`和`arguments.callee`都会抛出一个类型错误异常。
