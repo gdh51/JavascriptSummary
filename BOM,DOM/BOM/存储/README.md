@@ -1,8 +1,10 @@
 # 存储
 
+场景的浏览器存储一般为`cookie/localStorage/sessionStorage/IndexedDB`等等
+
 -   [Indexed Database](./IndexedDB/README.md)
 
-## 离线应用缓存(已废弃,但仍大量使用)
+## 离线应用缓存(已废弃，但仍大量使用，选择性查看即可)
 
 要想在缓存中保存数据，可以使用一个描述文件，列出要下载和缓存的资源。
 要将描述文件与页面关联起来，可以在`html`元素中指定`manifest`属性如下：

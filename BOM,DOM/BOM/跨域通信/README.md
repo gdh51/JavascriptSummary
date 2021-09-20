@@ -20,7 +20,7 @@
 
 跨文档信息传递通过`postMessage()`这个`API`来实现。
 
-`window.postMessage(data,origin)`：接受两个参数：第一个表示发送的消息，第二个参数为指明目标窗口的 URL————**协议+主机+端口号**，当某一项不匹配时都会被忽略; 当第二个参数为`*`时可以把消息发送给任何域。第一个参数最好只传入字符串，为了浏览器兼容性，也可以传递一个对象，会把该对象深度复制。当使用`*`时表示可以传给任意窗口，`/`时表示与当前窗口同源
+`window.postMessage(message, targetOrigin, [transfer])`：接受两个参数：第一个表示发送的消息，第二个参数为指明目标窗口的 URL————**协议+主机+端口号**，当某一项不匹配时都会被忽略；当第二个参数为`*`时可以把消息发送给任何域。第一个参数最好只传入字符串，为了浏览器兼容性，也可以传递一个对象，会把该对象深度复制。当使用`*`时表示可以传给任意窗口，`/`时表示与当前窗口同源；第三个参数为一个`Transferable`对象，这个对象之后会转交给通话窗体，之后两个窗体间可以进行跨域通话。
 
 `iframe`元素的`contentWindow`属性可以直接访问框架的`window`对象。
 
@@ -60,7 +60,7 @@ script.src = 'http://www.someURL.com:8080/name=lazy&callback=somefn'
 
 document.head.appendChild(script)
 
-function somefn(arg) {
+function someFunction(arg) {
     console.log(arg)
 }
 ```
@@ -68,7 +68,7 @@ function somefn(arg) {
 服务器在收到请求后，会解析`URL`,并根据`callback()`的值向请求方发送带有数据的函数如：
 
 ```js
-somefn({ status: 'ok' })
+someFunction({ status: 'ok' })
 ```
 
 该函数会在返回时立即执行。
@@ -306,10 +306,10 @@ console.log('Proxy server is listen at port 3000...')
 
 ## WebSocket 协议跨域
 
-WebSocket protocol 是 HTML5 一种新的协议。它实现了浏览器与服务器全双工通信，同时允许跨域通讯，是 server push 技术的一种很好的实现。
-原生 WebSocket API 使用起来不太方便，我们使用`Socket.io`，它很好地封装了 webSocket 接口，提供了更简单、灵活的接口，也对不支持 webSocket 的浏览器提供了向下兼容。这里就不在介绍
+_WebSocket protocol_ 是 HTML5 一种新的协议。它实现了浏览器与服务器全双工通信，同时允许跨域通讯，是 _server push_ 技术的一种很好的实现。
+原生 _WebSocket API_ 使用起来不太方便，我们使用`Socket.io`，它很好地封装了 webSocket 接口，提供了更简单、灵活的接口，也对不支持 webSocket 的浏览器提供了向下兼容。这里就不在介绍，具体了解下方链接：
 
-[参考](https://segmentfault.com/a/1190000011145364)
+[前端常见跨域解决方案（全）](https://segmentfault.com/a/1190000011145364)
 
 ## 跨站脚本（XSS）
 

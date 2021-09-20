@@ -125,7 +125,7 @@ Reference
 const bc = new BroadcastChannel('test-channel')
 ```
 
-![返回的BroadcastChannel对象](../MessageChannel/imgs/BroadcastChannel%20Object.jpg)
+![返回的BroadcastChannel对象](./imgs/BroadcastChannel%20Object.jpg)
 
 之后通过`BroadcastChannel.postMessage()`边可以通过广播信道向其他主体发送消息，该函数接受一个任意类型的参数。
 

@@ -1,23 +1,24 @@
-# Web计时/浏览器渲染性能
+# Web 计时/浏览器渲染性能
 
-Web计时机制(渲染性能)的核心是`window.performance`对象，该对象有三个表示对象的属性：
+Web 计时机制(渲染性能)的核心是`window.performance`对象，该对象有三个表示对象的属性：
 
-+ [navigation](#performancenavigation%e5%af%bc%e8%88%aa%e5%af%b9%e8%b1%a1)
-+ [memory](#performancememory%e6%b5%8f%e8%a7%88%e5%99%a8%e5%a0%86%e6%a0%88%e5%af%b9%e8%b1%a1)
-+ [timing](#performancetiming%e7%bd%91%e9%a1%b5%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f)
+-   [navigation](#performancenavigation%e5%af%bc%e8%88%aa%e5%af%b9%e8%b1%a1)
+-   [memory](#performancememory%e6%b5%8f%e8%a7%88%e5%99%a8%e5%a0%86%e6%a0%88%e5%af%b9%e8%b1%a1)
+-   [timing](#performancetiming%e7%bd%91%e9%a1%b5%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f)
 
 ## performance.navigation——导航对象
 
 其中一个为`performance.navigation`对象,它有以下属性:
 
-+ `redirectCount`：页面加载前的重定向次数
-+ `type`：刚刚发生的导航类型：
-  + `0`：页面通过点击一个链接、提交一个表单或者直接在地址栏输入`URL`，跳转或定位过来的。
-  + `1`: 表示页面重载操作访问的
-  + `2`: 表示当前页是通过浏览器历史记录，或后退或前进按钮打开的(即和浏览器历史记录有关的方式跳转的)
-  + `255`：上述之外情况访问网页时，都为该值
+-   `redirectCount`：页面加载前的重定向次数
+-   `type`：刚刚发生的导航类型：
+    -   `0`：页面通过点击一个链接、提交一个表单或者直接在地址栏输入`URL`，跳转或定位过来的。
+    -   `1`: 表示页面重载操作访问的
+    -   `2`: 表示当前页是通过浏览器历史记录，或后退或前进按钮打开的(即和浏览器历史记录有关的方式跳转的)
+    -   `255`：上述之外情况访问网页时，都为该值
 
-____
+---
+
 另外一个为`performance.timing`对象，该对象的属性都是时间戳。（从软件纪元开始经过的毫秒数），重点介绍下这一个对象：
 
 ## performance.timing——网页生命周期
@@ -26,32 +27,32 @@ ____
 
 ![浏览器加载时段流水图](./img/浏览器加载时段流水图.svg)
 
-+ `navigationStart`：开始浏览到当前页面的快照时间，或者为当前浏览器卸载前一个页面，或者不用执行卸载，开始获取新内容时的时间快照。
-+ `unloadEventStart`：前一个页面的`unload`事件开始的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值；
-+ `unloadEventEnd`：前一个页面`unload`事件结束的时间。
-+ `redirectStart、redirectEnd`：到当前页面的重定向开始或结束的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值，**这两个值的差值即HTTP重定向所消耗的时间**
-+ `fetchStart`：浏览器第一次检查用于存储请求资源的缓存时的开始时间，要计算缓存加载的全部时间，即`domainLookupStart - fetchStart`
-+ `domainLookupStart、domainLookupEnd`：开始查询当前页面`DNS`的时间或查询当前页面`DNS`结束的时间，**这两个值的差值即DNS查询的完整时间**
-+ `connectStart、connectEnd`：浏览器尝试与服务器建立`TCP`连接的时间、服务器与服务器完成`TCP`连接的时间，**这两个值的差值即建立TCP连接的完整时间**。
-+ `secureConnectionStart`：浏览器尝试以`SSL`方式连接服务器的开始时间，**该值与`connectEnd`的差值即建立SSL隧道的完整时间**。
-+ `requestStart、responseStart`：浏览器发送`HTTP`请求的时间快照或浏览器第一次对服务器的响应进行注册时的时间快照。
-+ `responseEnd`：浏览器完成接收服务器发出的响应的时间快照，**`responseEnd - connectStart`即完成一次HTTP往返所花费的总时间(包括建立HTTP请求的时间)**。
-+ `domLoading`：`document.readyState`变为`loading`的时间，文档开始加载的时间
-+ `domComplete`：文档加载完成的时间快照，**`domComplete - domLoading`即页面渲染所花费的时间**，**`domComplete - navigationStart`即加载页面所花费的时间(第一次请求到页面完全加载完成)**。
-+ `domInteractive`：`document.readyState`变为`interactive`的时间，此时用户可以与页面进行交互了。
-+ `domContentLoadedEventStart、domContentLoadedEventEnd`：发生`DOMContentLoaded`事件的时间、`DOMContentLoaded`事件已经发生且执行完所有事件程序的时间
-+ `loadEventEnd`：页面加载事件完成时触发该事件
-+ `loadEventStart`：页面加载事件开始时触发该事件
+-   `navigationStart` ：开始浏览到当前页面的快照时间，或者为当前浏览器卸载前一个页面，或者不用执行卸载，开始获取新内容时的时间快照。
+-   `unloadEventStart`：前一个页面的`unload`事件开始的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值；
+-   `unloadEventEnd`：前一个页面`unload`事件结束的时间。
+-   `redirectStart、redirectEnd`：到当前页面的重定向开始或结束的时间。但只有在前一个页面与当前页面来自同一个域时这个属性才有值，**这两个值的差值即 HTTP 重定向所消耗的时间**
+-   `fetchStart`：浏览器第一次检查用于存储请求资源的缓存时的开始时间，要计算缓存加载的全部时间，即`domainLookupStart - fetchStart`
+-   `domainLookupStart、domainLookupEnd`：开始查询当前页面`DNS`的时间或查询当前页面`DNS`结束的时间，**这两个值的差值即 DNS 查询的完整时间**
+-   `connectStart、connectEnd`：浏览器尝试与服务器建立`TCP`连接的时间、服务器与服务器完成`TCP`连接的时间，**这两个值的差值即建立 TCP 连接的完整时间**。
+-   `secureConnectionStart`：浏览器尝试以`SSL`方式连接服务器的开始时间，**该值与`connectEnd`的差值即建立 SSL 隧道的完整时间**。
+-   `requestStart、responseStart`：浏览器发送`HTTP`请求的时间快照或浏览器第一次对服务器的响应进行注册时的时间快照。
+-   `responseEnd`：浏览器完成接收服务器发出的响应的时间快照，**`responseEnd - connectStart`即完成一次 HTTP 往返所花费的总时间(包括建立 HTTP 请求的时间)**。
+-   `domLoading`：`document.readyState`变为`loading`的时间，文档开始加载的时间
+-   `domComplete`：文档加载完成的时间快照，**`domComplete - domLoading`即页面渲染所花费的时间**，**`domComplete - navigationStart`即加载页面所花费的时间(第一次请求到页面完全加载完成)**。
+-   `domInteractive`：`document.readyState`变为`interactive`的时间，此时用户可以与页面进行交互了。
+-   `domContentLoadedEventStart、domContentLoadedEventEnd`：发生`DOMContentLoaded`事件的时间、`DOMContentLoaded`事件已经发生且执行完所有事件程序的时间
+-   `loadEventEnd`：页面加载事件完成时触发该事件
+-   `loadEventStart`：页面加载事件开始时触发该事件
 
 ### performance.getEntriesByType(type)
 
 该方法用于返回一个指定`type`类型的属性获取一个该类型所有性能对象的数组，其中`type`可以为：
 
-+ `frame/navigation`：返回`performance.timing`对象，包含从输入URL到页面加载完成的时间
-+ `resource`：已解析的请求资源的URL对象的数组
-+ `mark`：通过调用`performance.mark()`创建标记时使用的名称。
-+ `measure`：通过调用`performance.measure()`创建度量时使用的名称
-+ `paint`：浏览器绘制到屏幕所需的时间对象
+-   `frame/navigation`：返回`performance.timing`对象，包含从输入 URL 到页面加载完成的时间
+-   `resource`：已解析的请求资源的 URL 对象的数组
+-   `mark`：通过调用`performance.mark()`创建标记时使用的名称。
+-   `measure`：通过调用`performance.measure()`创建度量时使用的名称
+-   `paint`：浏览器绘制到屏幕所需的时间对象
 
 这里我们重点关注一下通过`performance.getEntriesByType('navigation')`获取到的`performance.timing`对象，该对象与直接从`performance.timing`中返回的对象的不同在于它获取的是资源请求的时间(不包含`DOM`)且计算时间起点不一样，前者以`0`为起点，后者以软件纪元的时间为起点。
 
@@ -95,14 +96,14 @@ ____
 
 具体有以下时间段：
 
-+ `DNS`查询耗时：`domainLookupEnd - domainLookupStart`
-+ `TCP`连接耗时：`connectEnd - connectStart`
-+ `request`请求耗时(直到响应)：`responseEnd - requestStart`
-+ 解析`DOM`树耗时：`domComplete - responceEnd`
-+ 白屏时间(从加载到开始插入`dom`)：`domloadng - navigationStart`
-+ 首屏时间：`loadEventEnd - navigationStart`
-+ `DOMContentLoad`事件触发：`domContentLoadedEventEnd - domContentLoadedEventStart`
-+ `load`事件触发事件：`loadEventEnd - loadEventStart`
+-   `DNS`查询耗时：`domainLookupEnd - domainLookupStart`
+-   `TCP`连接耗时：`connectEnd - connectStart`
+-   `request`请求耗时(直到响应)：`responseEnd - requestStart`
+-   解析`DOM`树耗时：`domComplete - responceEnd`
+-   白屏时间(从加载到开始插入`dom`)：`domloadng - navigationStart`
+-   首屏时间：`loadEventEnd - navigationStart`
+-   `DOMContentLoad`事件触发：`domContentLoadedEventEnd - domContentLoadedEventStart`
+-   `load`事件触发事件：`loadEventEnd - loadEventStart`
 
 通过`performance.getEntriesByType('resource')`可以获取资源加载的时间的对象(以数组形式返回)
 ![资源加载时间戳](./img/resource.svg)
@@ -111,7 +112,7 @@ ____
 
 ## performance.now()
 
-它表示高分辨率时间，用亚毫米值记录时间，对于获取低于1毫秒的定时数据非常有用。
+它表示高分辨率时间，用亚毫米值记录时间，对于获取低于 1 毫秒的定时数据非常有用。
 
 `performance.now()`与`Date.now()`不同的是，返回了以毫秒为单位，精度为微秒级别（百万分之一秒）。
 
@@ -194,9 +195,9 @@ let measure = window.performance.getEntriesByType('measure');
 
 剩余还有一些方法，按方法名就能理解
 
-+ `performance.getEntriesByName(name)`：获取`name`为`name`的`performance`对象,返回一个数组集合
-+ `performance.clearMarks([name])`：接收一个`name`(可选)，清除指定`name`的标记(未传入参数时清空所有)
-+ `performance.clearMeasure([name])`: 同上同理
+-   `performance.getEntriesByName(name)`：获取`name`为`name`的`performance`对象,返回一个数组集合
+-   `performance.clearMarks([name])`：接收一个`name`(可选)，清除指定`name`的标记(未传入参数时清空所有)
+-   `performance.clearMeasure([name])`: 同上同理
 
 [参考](http://www.alloyteam.com/2015/09/explore-performance/)
 
@@ -209,11 +210,11 @@ let measure = window.performance.getEntriesByType('measure');
 
 其中它们分别的含义为：
 
-+ `usedJSHeapSize`：堆中当前所有正在使用的对象所占内存的总量
-+ `totalJSHeapSize`：未被对象使用的空闲空间在内的堆的总大小
-+ `jsHeapSizeLimit`：堆的最大容量
+-   `usedJSHeapSize`：堆中当前所有正在使用的对象所占内存的总量
+-   `totalJSHeapSize`：未被对象使用的空闲空间在内的堆的总大小
+-   `jsHeapSizeLimit`：堆的最大容量
 
-## 题外话1——defer/async与DOMContenLoaded
+## 题外话 1——defer/async 与 DOMContenLoaded
 
 基于上述的时间中的`DOMContentLoaded`，它表示文档（`DOM`）被加载和解析完成，在不包含脚本的文档中，它的时间即文档的解析时间；在包含脚本的文档中，脚本会阻塞文档的解析，且脚本需要等待之前的`CSS`解析完毕，待所有的文档解析完毕后才能触发。
 
@@ -223,7 +224,7 @@ let measure = window.performance.getEntriesByType('measure');
 
 而使用`async`的脚本不会影响`DOMContentLoaded`的触发，它表示解析到该脚本时异步下载脚本，文档的解析过程不中断，但脚本下载完毕后会立即执行。这就意味着，如果在文档解析完毕前下载完成，那么会阻塞文档的解析并执行脚本；如果在文档解析完毕后下载完成，那么与文档的解析和加载就毫无干系了(即`DOMContentLoaded`事件的触发不会受其阻塞)。
 
-## 题外话2——首屏/白屏时间/用户可操作时间
+## 题外话 2——首屏/白屏时间/用户可操作时间
 
 (基于`performance api`)
 **白屏**时间指用户输入`URL`到页面出现一点内容之间所用的时间，一般情况它在`domloading - navigationStart`这个时间段，但使用诸如`Vue`这样的框架时，它的时间会被延后到框架挂载对应的`DOM`元素，在`Vue`中我们需要在其根组件来的`Mounted`生命周期来获取。
@@ -249,4 +250,5 @@ let measure = window.performance.getEntriesByType('measure');
 
 那么此时涉及到一个首屏图片的检测，来判断哪些被归为首屏图片，一般情况下我们将屏幕中的图片作为首屏图片，所以我们需要检测图片相对于视窗的`offsetTop`来判断，如果图片在此之内则说明为首屏图片。
 
-参考1——[前端性能——监控起步](https://www.cnblogs.com/chuaWeb/p/PerformanceMonitoring.html)
+Reference:
+[前端性能——监控起步](https://www.cnblogs.com/chuaWeb/p/PerformanceMonitoring.html)
