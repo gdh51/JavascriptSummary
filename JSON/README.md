@@ -7,7 +7,7 @@ JSON 语法可以表示下面三种类型的值：
 -   **简单值**：可以表示字符串、数值、布尔值和`null`，不支持`undefined`。
 
 ```js
-'Hello World';
+'Hello World'
 ```
 
 JSON 字符串**必须使用双引号**（单引号会导致语法错误）
@@ -26,8 +26,8 @@ JSON 字符串**必须使用双引号**（单引号会导致语法错误）
 
 -   **数组**：表示一组有序的值的列表，可以通过数值索引来访问其中的值。
 
-```js
-[25, 'hi', true];
+```json
+[25, "hi", true]
 ```
 
 同对象一样，JSON 数组没有变量和末尾分号。
@@ -55,9 +55,9 @@ var book = {
     authors: ['Nicholas C.ZAks'],
     edition: 3,
     year: 2011,
-    method: function() {}
-};
-var jsonText = JSON.stringify(book);
+    method: function () {}
+}
+var jsonText = JSON.stringify(book)
 //解析为字符串结果为: "{"title":"Professional Javascript","authors":["Nicholas C.ZAks"],"edition":3,"year":2011}"
 ```
 
@@ -67,7 +67,7 @@ var jsonText = JSON.stringify(book);
 例如：当在上述方法中加入如下数组参数时：
 
 ```js
-var jsonText = JSON.stringify(book, ['title', 'edition']);
+var jsonText = JSON.stringify(book, ['title', 'edition'])
 //"{"title":"Professional Javascript","edition":3}"
 ```
 
@@ -76,22 +76,22 @@ var jsonText = JSON.stringify(book, ['title', 'edition']);
 当在上述方法中加入如下函数参数时：
 
 ```js
-var jsonText = JSON.stringify(book, function(key, value) {
-    console.log(key, value);
+var jsonText = JSON.stringify(book, function (key, value) {
+    console.log(key, value)
     switch (key) {
         case 'authors':
-            return value.join(',');
+            return value.join(',')
 
         case 'year':
-            return 5000;
+            return 5000
 
         case 'edition':
-            return undefined;
+            return undefined
 
         default:
-            return value;
+            return value
     }
-});
+})
 //"{"title":"Professional Javascript","authors":"Nicholas C.ZAks","year":5000}"
 ```
 
@@ -126,17 +126,21 @@ function (key, val) {
 其次**数组类型**的过滤器只对对象的键值对有效(即数组无效)：
 
 ```js
-let val = [1, 2,3, {
+let val = [
+    1,
+    2,
+    3,
+    {
         c: 1,
         b: 2,
         0: '1'
     },
     [1, 2]
-];
-JSON.stringify(val, [0, 1, 'c']);
+]
+JSON.stringify(val, [0, 1, 'c'])
 
 // 结果为
-[1,2,3,{"0":1,"c":1},[1,2]]
+;[1, 2, 3, { 0: 1, c: 1 }, [1, 2]]
 ```
 
 第三个参数为一个可选参数，表示是否在`JSON`字符串中保留缩进。
@@ -146,7 +150,7 @@ JSON.stringify(val, [0, 1, 'c']);
 例如：
 
 ```js
-var jsonText = JSON.stringify(book, null, 4);
+var jsonText = JSON.stringify(book, null, 4)
 /*"{
 *    "title": "Professional Javascript",
 *    "authors": [
@@ -162,7 +166,7 @@ var jsonText = JSON.stringify(book, null, 4);
 当该参数为一个*字符串*时，则这个字符串将会在 JSON 字符串中被用作缩进字符（而不是使用空格缩进）缩进字符串的最长不能超过 10 个字符长，超过后只出现前 10 个。例如：
 
 ```js
-var jsonText = JSON.stringify(book, null, 'wodessssddddf');
+var jsonText = JSON.stringify(book, null, 'wodessssddddf')
 /*"{
 *wodessssdd"title": "Professional Javascript",
 *wodessssdd"authors": [
@@ -181,11 +185,11 @@ var jsonText = JSON.stringify(book, null, 'wodessssddddf');
 
 如果要原生实现该函数，那么要注意以下几点：
 
-- `undefined`与`function`的键值对会被忽略
-- 循环引用会报错
-- 不会转换`symbol`的值
-- 对象属性名全部用`""`包围
-- 可以传入一个回调函数对每一个键值对或指定键值对进行干涉
+-   `undefined`与`function`的键值对会被忽略
+-   循环引用会报错
+-   不会转换`symbol`的值
+-   对象属性名全部用`""`包围
+-   可以传入一个回调函数对每一个键值对或指定键值对进行干涉
 
 其次是明确思路：
 
@@ -202,7 +206,7 @@ var jsonText = JSON.stringify(book, null, 'wodessssddddf');
 `parse()`：把 `JSON` 字符串解析为原始 `Javascript` 值。
 
 ```js
-var jsonObject = JSON.parse(jsonText);
+var jsonObject = JSON.parse(jsonText)
 ```
 
 返回为一个 js 对象：
@@ -218,18 +222,18 @@ var book = {
     edition: 3,
     year: 2011,
     releaseDate: new Date(2011, 11, 1)
-};
+}
 
-var jsonText = JSON.stringify(book);
-console.log(jsonText);
+var jsonText = JSON.stringify(book)
+console.log(jsonText)
 
-var jsonObject = JSON.parse(jsonText, function(key, value) {
+var jsonObject = JSON.parse(jsonText, function (key, value) {
     if (key == 'releaseDate') {
-        return new Date(value);
+        return new Date(value)
     } else {
-        return value;
+        return value
     }
-});
+})
 //原对象中releaseDate值为releaseDate:"2011-11-30T16:00:00.000Z"
 //现对象中releaseDate值为releaseDate:"Thu Dec 01 2011 00:00:00 GMT+0800 (中国标准时间)"
 ```
@@ -247,11 +251,11 @@ var book = {
     edition: 3,
     year: 2011,
     do: undefined,
-    toJSON: function() {
-        return this.title;
+    toJSON: function () {
+        return this.title
     }
-};
-var jsonText = JSON.stringify(book); //"Professional Javascript"
+}
+var jsonText = JSON.stringify(book) //"Professional Javascript"
 ```
 
 ## 序列化的顺序规则

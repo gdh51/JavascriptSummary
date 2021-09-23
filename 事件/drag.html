@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Drag</title>
+        <style>
+            .drag-thing {
+                width: 100px;
+                height: 100px;
+                border: 2px dashed black;
+            }
+
+            .target-area {
+                width: 200px;
+                height: 200px;
+                margin-top: 20px;
+                background-color: bisque;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="drag-thing" draggable="true">
+            我是可以拖，拖动我放置在目标区域可以随机设置值
+        </div>
+        <div class="target-area">无值</div>
+        <script>
+            const dragThing = document.querySelector('.drag-thing')
+            const target = document.querySelector('.target-area')
+            dragThing.addEventListener(
+                'dragstart',
+                e => e.dataTransfer.setData('text', Math.random()),
+                false
+            )
+            target.addEventListener('dragover', e => e.preventDefault(), false)
+            target.addEventListener(
+                'drop',
+                e => (e.target.textContent = e.dataTransfer.getData('text')),
+                false
+            )
+        </script>
+    </body>
+</html>

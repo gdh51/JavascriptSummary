@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ResizeObserver demo</title>
+        <style>
+            div {
+                width: 80%;
+                height: 400px;
+                padding: 20px;
+                border: 2px solid red;
+                background-color: rosybrown;
+            }
+        </style>
+    </head>
+    <body>
+        <div>打开控制台，拖动控制台宽度即可改变元素大小</div>
+        <script>
+            const div = document.querySelector('div')
+            const rO = new ResizeObserver(e => console.log(e))
+            rO.observe(div)
+        </script>
+    </body>
+</html>
