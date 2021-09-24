@@ -1,5 +1,7 @@
 # 异步编程
 
+-   [Fetch API](./Fetch%20API/README.md)
+
 ## 脚本化 HTTP
 
 `Comet`：服务器发起通信并异步发送消息到客户端。(服务器推送)
@@ -371,84 +373,3 @@ Access-Control-Allow-Credentials：true
 在主流浏览器中通过监听`xhr.readystatechange`事件及检测`xhr.readyState`的值是否为 3 就可以利用 XHR 对象实现 HTTP 流。
 
 随着浏览器不断接收数据，`xhr.readyState`的值会周期性的变为 3，且此时`xhr.readystatechange`属性中就会保存接收到的所有数据，此时在比较之前接收到的数据，决定*从什么位置开始取得最新的数据*即可。
-
-## Fetch API
-
-首先说明 IE 在所有版本都不支持
-
-`fetch` 是一个相当**底层**的 API，在实际项目使用中，需要做各种各样的封装和异常处理，而并非开箱即用
-
-书写一个请求的形式如下：
-
-```js
-fetch(url, options)
-    .then(response => {
-        //处理返回的请求,这里的返回请求只要不是网络错误都在这里
-    })
-    .catch(error => {
-        //处理网络错误
-    })
-
-//即：
-fetch(url, {
-    method: 'POST',
-
-    // 这里要设置符合对应格式的Content-Type
-    body: JSON.stringify(data),
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    credentials: 'same-origin'
-})
-    .then(res => {
-        console.log(res)
-    })
-    .catch(err => {
-        console.log(err)
-    })
-```
-
-### options 对象的配置选项
-
-一个完整的配置相包括：
-
-```js
-fetch(url, {
-    // 荷载，必须匹配Content-Type头部
-    body: JSON.stringify(data),
-
-    // 是否缓存，可选项有no-cache, reload, force-cache, only-if-cached
-    cache: 'no-cache', // *default
-
-    // 是否携带凭证(cookie)，默认不携带
-    credentials: 'same-origin', // include, same-origin, *omit
-    headers: {
-        'user-agent': 'Mozilla/4.0 MDN Example',
-        'content-type': 'application/json'
-    },
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-    mode: 'cors', // no-cors, cors, *same-origin
-    redirect: 'follow', // manual, *follow, error
-    referrer: 'no-referrer' // *client, no-referrer
-})
-```
-
-#### method
-
-表示请求的类型,默认是 GET
-
-#### headers
-
-设置请求的头部,默认为`{}`
-
-### 检查请求是否成功
-
-请求失败时不会直接被`catch()`方法捕获,而是必须通过`response.ok`的`Boolean`值来判断,`catch()`方法只会在网络错误时,才会触发
-
-### 默认不携带 cookie
-
-`Fetch`默认不会携带`cookie`,要想请求时携带,请设置`option`对象的`credentials`属性,它有以下值：
-
--   `'include'`：任何请求都携带`cookie`
--   `'same-origin'`：只有同源的请求才携带`cookie`
--   `'omit'`：任何请求不携带`cookie`(默认值，但之后版本有修改)
